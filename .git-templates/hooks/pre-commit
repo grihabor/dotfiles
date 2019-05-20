@@ -11,26 +11,29 @@
 current_name=$(git config user.name)
 current_email=$(git config user.email)
 remote=$(git remote -v | grep gitlab.rambler.ru)
+target_home_email="grihabor@gmail.com"
+target_work_email="g.borodin@rambler-co.ru"
+target_name="Borodin Gregory"
 
-if [ "$current_name" != "Borodin Gregory" ]
+if [ "$current_name" != "$target_name" ]
 then
-	echo "$current_name != Borodin Gregory"
+	echo "$current_name != $target_name"
 	exit 1
 fi
 
 if [ "$remote" = "" ]
 then
-	if [ "$current_email" != "grihabor@gmail.com" ]
+	if [ "$current_email" != "$target_home_email" ]
 	then
-		echo "$current_email != grihabor@gmail.com"
+		echo "$current_email != $target_home_email"
 		exit 1
-	else 
+	else
 		echo OK
 	fi
 else
-	if [ "$current_email" != "g.borodin@rambler-co.ru" ]
+	if [ "$current_email" != "$target_work_email" ]
 	then
-		echo "$current_email != g.borodin@rambler-co.ru" 
+		echo "$current_email != $target_work_email" 
 		exit 1
 	else 
 		echo OK
