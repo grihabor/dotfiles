@@ -28,9 +28,9 @@ then
 		echo OK
 	fi
 else
-	if [ "$current_email" != "gborodin@rambler-co.ru" ]
+	if [ "$current_email" != "g.borodin@rambler-co.ru" ]
 	then
-		echo "$current_email != gborodin@rambler-co.ru" 
+		echo "$current_email != g.borodin@rambler-co.ru" 
 		exit 1
 	else 
 		echo OK
