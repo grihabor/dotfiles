@@ -1376,10 +1376,13 @@ xkb_symbols "pc+us+ru:2+us:3+inet(evdev)" {
         symbols[Group3]= [               g,               G ]
     };
     key <AC06> {
-        type= "ALPHABETIC",
-        symbols[Group1]= [               h,               H ],
-        symbols[Group2]= [     Cyrillic_er,     Cyrillic_ER ],
-        symbols[Group3]= [               h,               H ]
+        type= "CUST_CAPSLOCK",
+        symbols[Group1]= [               h,               H, Left ],
+	actions[Group1]= [ NoAction(), NoAction(), RedirectKey(keycode=<LEFT>, clearmods=Lock) ],
+        symbols[Group2]= [     Cyrillic_er,     Cyrillic_ER, Left ],
+	actions[Group2]= [ NoAction(), NoAction(), RedirectKey(keycode=<LEFT>, clearmods=Lock) ],
+        symbols[Group3]= [               h,               H, Left ],
+	actions[Group3]= [ NoAction(), NoAction(), RedirectKey(keycode=<LEFT>, clearmods=Lock) ]
     };
     key <AC07> {
         type= "CUST_CAPSLOCK",
@@ -1391,16 +1394,22 @@ xkb_symbols "pc+us+ru:2+us:3+inet(evdev)" {
 	actions[Group3]= [ NoAction(), NoAction(), RedirectKey(keycode=<DOWN>, clearmods=Lock) ]
     };
     key <AC08> {
-        type= "ALPHABETIC",
-        symbols[Group1]= [               k,               K ],
-        symbols[Group2]= [     Cyrillic_el,     Cyrillic_EL ],
-        symbols[Group3]= [               k,               K ]
+        type= "CUST_CAPSLOCK",
+        symbols[Group1]= [               k,               K, Up ],
+	actions[Group1]= [ NoAction(), NoAction(), RedirectKey(keycode=<UP>, clearmods=Lock) ],
+        symbols[Group2]= [     Cyrillic_el,     Cyrillic_EL, Up ],
+	actions[Group2]= [ NoAction(), NoAction(), RedirectKey(keycode=<UP>, clearmods=Lock) ],
+        symbols[Group3]= [               k,               K, Up],
+	actions[Group3]= [ NoAction(), NoAction(), RedirectKey(keycode=<UP>, clearmods=Lock) ]
     };
     key <AC09> {
-        type= "ALPHABETIC",
-        symbols[Group1]= [               l,               L ],
-        symbols[Group2]= [     Cyrillic_de,     Cyrillic_DE ],
-        symbols[Group3]= [               l,               L ]
+        type= "CUST_CAPSLOCK",
+        symbols[Group1]= [               l,               L, Right ],
+	actions[Group1]= [ NoAction(), NoAction(), RedirectKey(keycode=<RGHT>, clearmods=Lock) ],
+        symbols[Group2]= [     Cyrillic_de,     Cyrillic_DE, Right ],
+	actions[Group2]= [ NoAction(), NoAction(), RedirectKey(keycode=<RGHT>, clearmods=Lock) ],
+        symbols[Group3]= [               l,               L, Right ],
+	actions[Group3]= [ NoAction(), NoAction(), RedirectKey(keycode=<RGHT>, clearmods=Lock) ]
     };
     key <AC10> {
         type[group2]= "ALPHABETIC",
