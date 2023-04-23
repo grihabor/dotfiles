@@ -722,6 +722,15 @@ xkb_types "complete" {
         level_name[Level3]= "Alt Base";
         level_name[Level4]= "Alt Number";
     };
+    type "CUST_CAPSLOCK" {
+        modifiers= Shift+Lock;
+        map[Shift] = Level2;            //maps shift and no Lock. Shift+Alt goes here, too, because Alt isn't in modifiers.
+        map[Lock] = Level3;
+        map[Shift+Lock] = Level3;       //maps shift and Lock. Shift+Lock+Alt goes here, too.
+        level_name[Level1]= "Base";
+        level_name[Level2]= "Shift";
+        level_name[Level3]= "Lock";
+    };
 };
 
 xkb_compatibility "complete" {
@@ -1176,7 +1185,7 @@ xkb_compatibility "complete" {
         action= LockMods(modifiers=LevelFive);
     };
     interpret Caps_Lock+AnyOfOrNone(all) {
-        action= LockMods(modifiers=Lock);
+        action= SetMods(modifiers=Lock);
     };
     interpret Any+Exactly(Lock) {
         action= LockMods(modifiers=Lock);
@@ -1373,10 +1382,13 @@ xkb_symbols "pc+us+ru:2+us:3+inet(evdev)" {
         symbols[Group3]= [               h,               H ]
     };
     key <AC07> {
-        type= "ALPHABETIC",
-        symbols[Group1]= [               j,               J ],
-        symbols[Group2]= [      Cyrillic_o,      Cyrillic_O ],
-        symbols[Group3]= [               j,               J ]
+        type= "CUST_CAPSLOCK",
+        symbols[Group1]= [               j,               J, Down ],
+	actions[Group1]= [ NoAction(), NoAction(), RedirectKey(keycode=<DOWN>, clearmods=Lock) ],
+        symbols[Group2]= [      Cyrillic_o,      Cyrillic_O, Down ],
+	actions[Group2]= [ NoAction(), NoAction(), RedirectKey(keycode=<DOWN>, clearmods=Lock) ],
+        symbols[Group3]= [               j,               J, Down ],
+	actions[Group3]= [ NoAction(), NoAction(), RedirectKey(keycode=<DOWN>, clearmods=Lock) ]
     };
     key <AC08> {
         type= "ALPHABETIC",
