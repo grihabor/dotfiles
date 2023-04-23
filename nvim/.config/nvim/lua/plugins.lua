@@ -14,10 +14,6 @@ return require('packer').startup(function(use)
   -- Configurations for Nvim LSP
   use 'neovim/nvim-lspconfig' 
   
-  -- Package manager for LSP servers
-  use 'williamboman/mason.nvim'
-  use 'williamboman/mason-lspconfig.nvim'
-
   -- Completion framework:
   use 'hrsh7th/nvim-cmp' 
 
