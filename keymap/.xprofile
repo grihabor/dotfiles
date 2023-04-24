@@ -1,5 +1,4 @@
 #!/bin/sh
 
-# setxkbmap -option caps:swapescape
-# xkbcomp ~/.xkeymap $DISPLAY
+xkbcomp ~/.xkeymap $DISPLAY
 
