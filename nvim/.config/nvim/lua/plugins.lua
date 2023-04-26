@@ -28,10 +28,19 @@ return require('packer').startup(function(use)
   use 'hrsh7th/cmp-buffer'                            
   use 'hrsh7th/vim-vsnip'     
 
-  use 'nvim-treesitter/nvim-treesitter'
+  use {
+    'nvim-treesitter/nvim-treesitter',
+    run = ':TSUpdate'
+  }
+  use "IndianBoy42/tree-sitter-just"
 
   -- Rust 
   use 'simrat39/rust-tools.nvim'
+
+  -- Python
+  use {
+    'psf/black', branch = 'stable'
+  }
 
 end)
 
