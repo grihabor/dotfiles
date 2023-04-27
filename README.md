@@ -2,7 +2,7 @@
 
 Install git pre-commit hook
 ```bash
-./git_init_subdirectories.sh
+./install.py
 ```
 
 Install neovim config 
