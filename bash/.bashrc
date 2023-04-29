@@ -139,3 +139,8 @@ alias vim="nvim"
 alias view="nvim -R"
 alias vimdiff="nvim -d"
 
+alias fd="fdfind"
+
+export NPM_PACKAGES="$HOME/.npm-packages"
+export PATH=/home/grihabor/.npm-packages/bin/:$PATH
+export PATH=/home/grihabor/.local/bin/:$PATH

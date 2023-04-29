@@ -2,8 +2,22 @@
 return require('packer').startup(function(use)	
   use 'wbthomason/packer.nvim'
 
+  -- git 
+  use 'tpope/vim-fugitive'
+
+  -- Autosave
+  use({
+	"Pocco81/auto-save.nvim",
+	config = function()
+		 require("auto-save").setup {
+			-- your config goes here
+			-- or just leave it empty :)
+		 }
+	end,
+  })
+
+  -- Fuzzy finder
   use {
-    -- Fuzzy finder
     'nvim-telescope/telescope.nvim', tag = '0.1.1',
     requires = { {'nvim-lua/plenary.nvim'} }
   }
@@ -15,19 +29,18 @@ return require('packer').startup(function(use)
   use 'neovim/nvim-lspconfig' 
   
   -- Completion framework:
-  use 'hrsh7th/nvim-cmp' 
-
-  -- LSP completion source:
   use 'hrsh7th/cmp-nvim-lsp'
-
-  -- Useful completion sources:
+  use 'hrsh7th/cmp-buffer'                            
+  use 'hrsh7th/cmp-path'                              
+  use 'hrsh7th/nvim-cmp' 
   use 'hrsh7th/cmp-nvim-lua'
   use 'hrsh7th/cmp-nvim-lsp-signature-help'
-  use 'hrsh7th/cmp-vsnip'                             
-  use 'hrsh7th/cmp-path'                              
-  use 'hrsh7th/cmp-buffer'                            
-  use 'hrsh7th/vim-vsnip'     
 
+  -- Code snippets
+  use 'SirVer/ultisnips'
+  use 'quangnguyen30192/cmp-nvim-ultisnips'
+
+  -- Language parsers
   use {
     'nvim-treesitter/nvim-treesitter',
     run = ':TSUpdate'

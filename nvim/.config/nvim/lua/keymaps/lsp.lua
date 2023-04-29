@@ -39,9 +39,30 @@ local on_attach = function(client, bufnr)
   end, { desc = "LSP workspace symbols" })
 end
 
-require('lspconfig')['pyright'].setup{
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
+require'lspconfig'.pyright.setup{
     on_attach = on_attach,
+    capabilities=capabilities,
 }
+require'lspconfig'.tsserver.setup{
+    on_attach = on_attach,
+    capabilities=capabilities,
+}
+-- require'lspconfig'.pylsp.setup{
+--     on_attach = on_attach,
+--     capabilities = capabilities,
+--   settings = {
+--     pylsp = {
+--       plugins = {
+--           pycodestyle = {enabled = false},
+--           mccabe = {enabled = false},
+--           pyflakes = {enabled = false},
+--           flake8 = {enabled = true},
+--           rope_autoimport = {enabled = true},
+--       }
+--     }
+--   }
+-- }
 
 -- Don't configure lspconfig for rust because it is managed by rust-tools
 
