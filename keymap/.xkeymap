@@ -1284,10 +1284,13 @@ xkb_symbols "pc+us+ru:2+us:3+inet(evdev)" {
         symbols[Group3]= [               w,               W ]
     };
     key <AD03> {
-        type= "ALPHABETIC",
-        symbols[Group1]= [               e,               E ],
-        symbols[Group2]= [      Cyrillic_u,      Cyrillic_U ],
-        symbols[Group3]= [               e,               E ]
+        type= "CUST_CAPSLOCK",
+        symbols[Group1]= [               e,               E, Escape ],
+        actions[Group1]= [ NoAction(), NoAction(), RedirectKey(keycode=<ESC>, clearmods=Lock) ],
+        symbols[Group2]= [      Cyrillic_u,      Cyrillic_U, Escape ],
+        actions[Group2]= [ NoAction(), NoAction(), RedirectKey(keycode=<ESC>, clearmods=Lock) ],
+        symbols[Group3]= [               e,               E, Escape ],
+        actions[Group3]= [ NoAction(), NoAction(), RedirectKey(keycode=<ESC>, clearmods=Lock) ]
     };
     key <AD04> {
         type= "ALPHABETIC",
@@ -1358,10 +1361,13 @@ xkb_symbols "pc+us+ru:2+us:3+inet(evdev)" {
         symbols[Group3]= [               s,               S ]
     };
     key <AC03> {
-        type= "ALPHABETIC",
-        symbols[Group1]= [               d,               D ],
-        symbols[Group2]= [     Cyrillic_ve,     Cyrillic_VE ],
-        symbols[Group3]= [               d,               D ]
+        type= "CUST_CAPSLOCK",
+        symbols[Group1]= [               d,               D, Delete ],
+        actions[Group1]= [ NoAction(), NoAction(), RedirectKey(keycode=<DELE>, clearmods=Lock) ],
+        symbols[Group2]= [     Cyrillic_ve,     Cyrillic_VE, Delete ],
+        actions[Group2]= [ NoAction(), NoAction(), RedirectKey(keycode=<DELE>, clearmods=Lock) ],
+        symbols[Group3]= [               d,               D, Delete ],
+        actions[Group3]= [ NoAction(), NoAction(), RedirectKey(keycode=<DELE>, clearmods=Lock) ]
     };
     key <AC04> {
         type= "ALPHABETIC",
@@ -1442,10 +1448,13 @@ xkb_symbols "pc+us+ru:2+us:3+inet(evdev)" {
         symbols[Group3]= [               z,               Z ]
     };
     key <AB02> {
-        type= "ALPHABETIC",
-        symbols[Group1]= [               x,               X ],
-        symbols[Group2]= [    Cyrillic_che,    Cyrillic_CHE ],
-        symbols[Group3]= [               x,               X ]
+        type= "CUST_CAPSLOCK",
+        symbols[Group1]= [               x,               X, BackSpace ],
+        actions[Group1]= [ NoAction(), NoAction(), RedirectKey(keycode=<BKSP>, clearmods=Lock) ],
+        symbols[Group2]= [    Cyrillic_che,    Cyrillic_CHE, BackSpace ],
+        actions[Group2]= [ NoAction(), NoAction(), RedirectKey(keycode=<BKSP>, clearmods=Lock) ],
+        symbols[Group3]= [               x,               X, BackSpace ],
+        actions[Group3]= [ NoAction(), NoAction(), RedirectKey(keycode=<BKSP>, clearmods=Lock) ]
     };
     key <AB03> {
         type= "ALPHABETIC",
