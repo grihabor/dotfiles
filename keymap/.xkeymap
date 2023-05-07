@@ -1305,28 +1305,40 @@ xkb_symbols "pc+us+ru:2+us:3+inet(evdev)" {
         symbols[Group3]= [               t,               T ]
     };
     key <AD06> {
-        type= "ALPHABETIC",
-        symbols[Group1]= [               y,               Y ],
-        symbols[Group2]= [     Cyrillic_en,     Cyrillic_EN ],
-        symbols[Group3]= [               y,               Y ]
+        type= "CUST_CAPSLOCK",
+        symbols[Group1]= [               y,               Y, Home ],
+        actions[Group1]= [ NoAction(), NoAction(), RedirectKey(keycode=<HOME>, clearmods=Lock) ],
+        symbols[Group2]= [     Cyrillic_en,     Cyrillic_EN, Home ],
+        actions[Group2]= [ NoAction(), NoAction(), RedirectKey(keycode=<HOME>, clearmods=Lock) ],
+        symbols[Group3]= [               y,               Y, Home ],
+        actions[Group3]= [ NoAction(), NoAction(), RedirectKey(keycode=<HOME>, clearmods=Lock) ]
     };
     key <AD07> {
-        type= "ALPHABETIC",
-        symbols[Group1]= [               u,               U ],
-        symbols[Group2]= [    Cyrillic_ghe,    Cyrillic_GHE ],
-        symbols[Group3]= [               u,               U ]
+        type= "CUST_CAPSLOCK",
+        symbols[Group1]= [               u,               U, Next ],
+        actions[Group1]= [ NoAction(), NoAction(), RedirectKey(keycode=<PGDN>, clearmods=Lock) ],
+        symbols[Group2]= [    Cyrillic_ghe,    Cyrillic_GHE, Next ],
+        actions[Group2]= [ NoAction(), NoAction(), RedirectKey(keycode=<PGDN>, clearmods=Lock) ],
+        symbols[Group3]= [               u,               U, Next ],
+        actions[Group3]= [ NoAction(), NoAction(), RedirectKey(keycode=<PGDN>, clearmods=Lock) ]
     };
     key <AD08> {
-        type= "ALPHABETIC",
-        symbols[Group1]= [               i,               I ],
-        symbols[Group2]= [    Cyrillic_sha,    Cyrillic_SHA ],
-        symbols[Group3]= [               i,               I ]
+        type= "CUST_CAPSLOCK",
+        symbols[Group1]= [               i,               I, Prior ],
+        actions[Group1]= [ NoAction(), NoAction(), RedirectKey(keycode=<PGUP>, clearmods=Lock) ],
+        symbols[Group2]= [    Cyrillic_sha,    Cyrillic_SHA, Prior ],
+        actions[Group2]= [ NoAction(), NoAction(), RedirectKey(keycode=<PGUP>, clearmods=Lock) ],
+        symbols[Group3]= [               i,               I, Prior ],
+        actions[Group3]= [ NoAction(), NoAction(), RedirectKey(keycode=<PGUP>, clearmods=Lock) ]
     };
     key <AD09> {
-        type= "ALPHABETIC",
-        symbols[Group1]= [               o,               O ],
-        symbols[Group2]= [  Cyrillic_shcha,  Cyrillic_SHCHA ],
-        symbols[Group3]= [               o,               O ]
+        type= "CUST_CAPSLOCK",
+        symbols[Group1]= [               o,               O, End ],
+        actions[Group1]= [ NoAction(), NoAction(), RedirectKey(keycode=<END>, clearmods=Lock) ],
+        symbols[Group2]= [  Cyrillic_shcha,  Cyrillic_SHCHA, End ],
+        actions[Group2]= [ NoAction(), NoAction(), RedirectKey(keycode=<END>, clearmods=Lock) ],
+        symbols[Group3]= [               o,               O, End ],
+        actions[Group3]= [ NoAction(), NoAction(), RedirectKey(keycode=<END>, clearmods=Lock) ]
     };
     key <AD10> {
         type= "ALPHABETIC",

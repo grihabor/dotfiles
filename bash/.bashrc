@@ -144,3 +144,5 @@ alias fd="fdfind"
 export NPM_PACKAGES="$HOME/.npm-packages"
 export PATH=/home/grihabor/.npm-packages/bin/:$PATH
 export PATH=/home/grihabor/.local/bin/:$PATH
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/grihabor/.pyenv/versions/3.11.3/lib
+
