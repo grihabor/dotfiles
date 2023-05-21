@@ -116,39 +116,47 @@ if ! shopt -oq posix; then
   fi
 fi
 
-export PATH="/home/grihabor/bin:$PATH"
 source <(kubectl completion bash)
 export KUBECONFIG=/home/grihabor/.kubernetes/config.yml
-export PATH="/home/grihabor/bin/google-cloud-sdk/bin:$PATH"
 
 source /usr/share/bash-completion/completions/git
 . "$HOME/.cargo/env"
+
+# for git hook
 export GIT_ORGANIZATION_NAME="pulsepointinc"
 export GIT_ORGANIZATION_USER_NAME="Borodin Gregory"
 export GIT_ORGANIZATION_USER_EMAIL="gborodin@pulsepoint.com"
 export GIT_PERSONAL_USER_NAME="Borodin Gregory"
 export GIT_PERSONAL_USER_EMAIL="grihabor@gmail.com"
 
+# pyenv
 export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 
+# neovim aliases
 alias vi="nvim"
 alias vim="nvim"
 alias view="nvim -R"
 alias vimdiff="nvim -d"
 
+# fd aliases
 alias fd="fdfind"
 
+# npm
 export NPM_PACKAGES="$HOME/.npm-packages"
 
-export PATH=$PATH:/home/grihabor/.npm-packages/bin/
-export PATH=$PATH:/home/grihabor/.local/bin/
-export PATH=$PATH:/usr/local/go/bin/
-export PATH=$PATH:/home/grihabor/go/bin/
+# path
+export PATH="$PATH:/home/grihabor/bin"
+export PATH="$PATH:/home/grihabor/bin/google-cloud-sdk/bin"
+export PATH="$PATH:/home/grihabor/.npm-packages/bin/"
+export PATH="$PATH:/home/grihabor/.local/bin/"
+export PATH="$PATH:/usr/local/go/bin/"
+export PATH="$PATH:/home/grihabor/go/bin/"
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/grihabor/.pyenv/versions/3.11.3/lib
 
-source ~/.fonts/*.sh
-
+if [ -z "$NVIM" ] ; then
+    nvim -c terminal -c startinsert -c 'set laststatus=0 ruler'
+fi
