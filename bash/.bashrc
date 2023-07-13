@@ -63,15 +63,6 @@ else
 fi
 unset color_prompt force_color_prompt
 
-# If this is an xterm set the title to user@host:dir
-case "$TERM" in
-xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-    ;;
-*)
-    ;;
-esac
-
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
@@ -138,25 +129,37 @@ eval "$(pyenv virtualenv-init -)"
 # neovim aliases
 alias vi="nvim"
 alias vim="nvim"
-alias view="nvim -R"
 alias vimdiff="nvim -d"
 
 # fd aliases
 alias fd="fdfind"
 
+# kubectl reporting-api aliases
+alias kure="kubectl --context dm-dev -n rapi-regression"
+alias kupr="kubectl --context dm-dev -n rapi-prerelease"
+alias kuqa="kubectl --context dm-dev -n rapi-qa"
+alias kupd="kubectl --context dm-prod -n reporting-api"
+
+# enable complete alias script
+. ~/projects/complete-alias/complete_alias
+
+# patch aliases to make completion work
+complete -F _complete_alias kure
+complete -F _complete_alias kupr
+complete -F _complete_alias kuqa
+complete -F _complete_alias kupd
+
 # npm
 export NPM_PACKAGES="$HOME/.npm-packages"
 
-# path
-export PATH="$PATH:/home/grihabor/bin"
-export PATH="$PATH:/home/grihabor/bin/google-cloud-sdk/bin"
-export PATH="$PATH:/home/grihabor/.npm-packages/bin/"
-export PATH="$PATH:/home/grihabor/.local/bin/"
-export PATH="$PATH:/usr/local/go/bin/"
-export PATH="$PATH:/home/grihabor/go/bin/"
 
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/grihabor/.pyenv/versions/3.11.3/lib
+export EDITOR=nvim
 
-if [ -z "$NVIM" ] ; then
-    nvim -c terminal -c startinsert -c 'set laststatus=0 ruler'
+eval "$(zoxide init bash)"
+
+if test -z "$NVIM" && test -n "$TMUX"; then
+    v -c terminal -c startinsert
 fi
+
+export COMPOSE_PROFILES=metrics
+
