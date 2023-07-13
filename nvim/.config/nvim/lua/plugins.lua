@@ -15,16 +15,15 @@ return require('packer').startup(function(use)
 
   use 'tpope/vim-repeat'
   use 'tpope/vim-surround'
+  -- use 'christoomey/vim-tmux-navigator'
+  use 'HiPhish/jinja.vim'
+  use 'vim-test/vim-test'
+
+  -- automatically create pairs of braces, brackets, etc.
   use 'm4xshen/autoclose.nvim'
 
-  -- open nvim from terminal without nested session
-  -- use {
-  --     "samjwill/nvim-unception",
-  --     setup = function()
-  --         vim.g.unception_open_buffer_in_new_tab = true
-  --     end
-  -- }
-  use 'willothy/flatten.nvim'
+  -- open files from nvim terminal without nested sessions
+  use 'mhinz/neovim-remote'
 
   -- manage files in regular vim buffer
   use {
@@ -60,6 +59,7 @@ return require('packer').startup(function(use)
 
   -- configurations for Nvim LSP
   use 'neovim/nvim-lspconfig' 
+  -- use 'nvim-lua/lsp-status.nvim'
   
   -- completion framework:
   use 'hrsh7th/cmp-nvim-lsp'
@@ -79,6 +79,7 @@ return require('packer').startup(function(use)
     run = ':TSUpdate'
   }
   use "IndianBoy42/tree-sitter-just"
+  use "chr4/nginx.vim"
 
   -- rust 
   use 'simrat39/rust-tools.nvim'

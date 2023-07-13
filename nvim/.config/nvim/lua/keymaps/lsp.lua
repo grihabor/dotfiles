@@ -10,6 +10,7 @@ local telescope_builtin = require('telescope.builtin')
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
 local on_attach = function(client, bufnr)
+
   -- Enable completion triggered by <c-x><c-o>
   vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
@@ -42,18 +43,26 @@ local on_attach = function(client, bufnr)
   end, { desc = "LSP workspace symbols" })
 end
 
+
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
-require'lspconfig'.pyright.setup{
-    on_attach = on_attach,
+
+local lspconfig = require('lspconfig')
+
+-- lspconfig.pylyzer.setup{
+--     on_attach=on_attach,
+--     capabilities=capabilities,
+-- }
+lspconfig.pyright.setup{
+    on_attach=on_attach,
     capabilities=capabilities,
 }
-require'lspconfig'.tsserver.setup{
-    on_attach = on_attach,
+lspconfig.tsserver.setup{
+    on_attach=on_attach,
     capabilities=capabilities,
 }
--- require'lspconfig'.pylsp.setup{
---     on_attach = on_attach,
---     capabilities = capabilities,
+-- lspconfig.pylsp.setup{
+--     on_attach=on_attach,
+--     capabilities=capabilities,
 --   settings = {
 --     pylsp = {
 --       plugins = {
@@ -66,6 +75,8 @@ require'lspconfig'.tsserver.setup{
 --     }
 --   }
 -- }
-
--- Don't configure lspconfig for rust because it is managed by rust-tools
+lspconfig.rust_analyzer.setup{
+    on_attach=on_attach,
+    capabilities=capabilities,
+}
 
