@@ -120,6 +120,8 @@ export GIT_ORGANIZATION_USER_EMAIL="gborodin@pulsepoint.com"
 export GIT_PERSONAL_USER_NAME="Borodin Gregory"
 export GIT_PERSONAL_USER_EMAIL="grihabor@gmail.com"
 
+. ~/.vault-env
+
 # pyenv
 export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
@@ -163,3 +165,14 @@ fi
 
 export COMPOSE_PROFILES=metrics
 
+###
+# https://unix.stackexchange.com/questions/1288/preserve-bash-history-in-multiple-terminal-windows
+###
+
+# Avoid duplicates
+HISTCONTROL=ignoredups:erasedups
+# When the shell exits, append to the history file instead of overwriting it
+shopt -s histappend
+
+# After each command, append to the history file and reread it
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
