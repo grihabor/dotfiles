@@ -108,7 +108,6 @@ if ! shopt -oq posix; then
 fi
 
 source <(kubectl completion bash)
-export KUBECONFIG=/home/grihabor/.kubernetes/config.yml
 
 source /usr/share/bash-completion/completions/git
 . "$HOME/.cargo/env"
