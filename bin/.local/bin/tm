@@ -6,13 +6,12 @@ PROJECT_ROOT=$(fd --hidden --regex "^.git$" \
 	--type d \
 	--min-depth 2 \
 	--max-depth 3 \
-	$HOME |
+	"$HOME" |
 	xargs dirname |
 	fzf)
 
 NAME=$(basename "$PROJECT_ROOT")
-tmux has-session -t "$NAME"
-if [ $? != 0 ]; then
+if ! tmux has-session -t="$NAME"; then
 	echo "Creating session $NAME"
 	if [ "$TMUX" != "" ]; then
 		FLAGS="-d"
