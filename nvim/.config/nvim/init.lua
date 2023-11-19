@@ -4,7 +4,14 @@ require('plugins')
 require('keymaps')
 require('options')
 
-vim.cmd "autocmd vimenter * ++nested colorscheme gruvbox"
+-- require("gruvbox").setup({
+--     overrides = {
+--         ErrorMsg = { fg = colors.bg0, bg = colors.white, bold = config.bold },
+--     }
+-- })
+-- vim.cmd "autocmd vimenter * ++nested colorscheme gruvbox"
+vim.o.background = "dark"
+vim.cmd([[colorscheme gruvbox]])
 -- vim.cmd[[colorscheme dracula]]
 -- vim.cmd[[colorscheme tokyonight]]
 -- vim.cmd[[colorscheme sonokai]]

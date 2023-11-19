@@ -20,7 +20,7 @@ return require('packer').startup(function(use)
   use 'vim-test/vim-test'
 
   -- automatically create pairs of braces, brackets, etc.
-  use 'm4xshen/autoclose.nvim'
+  -- use 'm4xshen/autoclose.nvim'
 
   -- open files from nvim terminal without nested sessions
   use 'mhinz/neovim-remote'
@@ -52,7 +52,8 @@ return require('packer').startup(function(use)
   }
 
   -- color theme
-  use 'morhetz/gruvbox'
+  -- use 'morhetz/gruvbox'
+  use { "ellisonleao/gruvbox.nvim" }
   -- use 'Mofiqul/dracula.nvim'
   -- use 'folke/tokyonight.nvim'
   -- use 'sainnhe/sonokai'

@@ -5,5 +5,5 @@ require('options.treesitter')
 -- require('options.nvim_tree')
 
 -- require("oil").setup()
-require("autoclose").setup()
+-- require("autoclose").setup()
 
