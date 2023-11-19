@@ -1,0 +1,17 @@
+name: Run linters
+on: [push]
+jobs:
+  shellcheck:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: apt-get update && apt-get install -y shellcheck=0.8.0-2
+      - run: find bin/ -type f | xargs shellcheck
+
+  shfmt:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v4
+      - run: go install go install mvdan.cc/sh/v3/cmd/shfmt@v3.7.0
+      - run: find bin/ -type f | xargs shfmt -d -i 4

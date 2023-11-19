@@ -1,27 +1,27 @@
 #!/bin/bash
 
 PROJECT_ROOT=$(fd --hidden --regex "^.git$" \
-	--exclude .cargo \
-	--exclude .local \
-	--type d \
-	--min-depth 2 \
-	--max-depth 3 \
-	"$HOME" |
-	xargs dirname |
-	fzf)
+    --exclude .cargo \
+    --exclude .local \
+    --type d \
+    --min-depth 2 \
+    --max-depth 3 \
+    "$HOME" |
+    xargs dirname |
+    fzf)
 
 NAME=$(basename "$PROJECT_ROOT")
 if ! tmux has-session -t="$NAME"; then
-	echo "Creating session $NAME"
-	if [ "$TMUX" != "" ]; then
-		FLAGS="-d"
-	fi
-	tmux new-session $FLAGS \
-		-c "$PROJECT_ROOT" \
-		-s "$NAME"
+    echo "Creating session $NAME"
+    if [ "$TMUX" != "" ]; then
+        FLAGS="-d"
+    fi
+    tmux new-session $FLAGS \
+        -c "$PROJECT_ROOT" \
+        -s "$NAME"
 fi
 if [ "$TMUX" == "" ]; then
-	tmux attach -t "$NAME"
+    tmux attach -t "$NAME"
 else
-	tmux switch-client -t "$NAME"
+    tmux switch-client -t "$NAME"
 fi
