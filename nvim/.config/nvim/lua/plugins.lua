@@ -94,5 +94,14 @@ return require('packer').startup(function(use)
     ft = "python"
   })
 
+  use({
+    "stevearc/conform.nvim",
+  })
+
+  use {
+ "folke/trouble.nvim",
+ requires = { "nvim-tree/nvim-web-devicons" },
+ }
+
 end)
 

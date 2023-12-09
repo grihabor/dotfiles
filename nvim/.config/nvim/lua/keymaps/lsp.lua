@@ -6,10 +6,11 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
 vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, opts)
 
 local telescope_builtin = require('telescope.builtin')
+local conform = require("conform")
 
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
-local on_attach = function(format) return function(client, bufnr)
+local on_attach = function(args) return function(client, bufnr)
 
   -- Enable completion triggered by <c-x><c-o>
   vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
@@ -32,12 +33,12 @@ local on_attach = function(format) return function(client, bufnr)
   vim.keymap.set('n', '<space>ca', vim.lsp.buf.code_action, bufopts)
   -- vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
 
-  if format == nil then
-      vim.keymap.set('n', '<space>f', function() vim.lsp.buf.format { async = true } end, bufopts)
+  if args.use_conform then
+      vim.keymap.set('n', '<space>f', function() conform.format( {bufnr=bufnr} ) end)
   else
-      vim.keymap.set('n', '<space>f', format, bufopts)
+      vim.keymap.set('n', '<space>f', function() vim.lsp.buf.format { async = true } end, bufopts)
   end
-
+  
   vim.keymap.set('n', 'gr', function() 
       telescope_builtin.lsp_references()
   end )
@@ -59,11 +60,11 @@ local lspconfig = require('lspconfig')
 --     capabilities=capabilities,
 -- }
 lspconfig.pyright.setup{
-    on_attach=on_attach(function() vim.cmd("Black") end),
+    on_attach=on_attach({ use_conform = true }),
     capabilities=capabilities,
 }
 lspconfig.tsserver.setup{
-    on_attach=on_attach(nil),
+    on_attach=on_attach(),
     capabilities=capabilities,
 }
 -- lspconfig.pylsp.setup{
@@ -82,7 +83,7 @@ lspconfig.tsserver.setup{
 --   }
 -- }
 lspconfig.rust_analyzer.setup{
-    on_attach=on_attach(nil),
+    on_attach=on_attach(),
     capabilities=capabilities,
 }
 

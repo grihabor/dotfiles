@@ -1,6 +1,8 @@
 vim.g.python3_host_prog = '/home/grihabor/.pyenv/versions/py3nvim/bin/python'
 
 require('plugins')
+
+
 require('keymaps')
 require('options')
 
