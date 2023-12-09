@@ -6,9 +6,6 @@ alias kupr="kubectl --context dm-dev -n rapi-prerelease"
 alias kuqa="kubectl --context dm-dev -n rapi-qa"
 alias kupd="kubectl --context dm-prod -n reporting-api"
 
-# enable complete alias script
-. ~/projects/complete-alias/complete_alias
-
 # patch aliases to make completion work
 complete -F _complete_alias kure
 complete -F _complete_alias kupr

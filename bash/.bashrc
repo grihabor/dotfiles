@@ -107,60 +107,25 @@ if ! shopt -oq posix; then
   fi
 fi
 
+for path in $HOME/.bashrc.d/*.sh; do
+    . "$path"
+done
+
 source <(kubectl completion bash)
 
 source /usr/share/bash-completion/completions/git
 . "$HOME/.cargo/env"
 
-# for git hook
-export GIT_ORGANIZATION_NAME="pulsepointinc"
-export GIT_ORGANIZATION_USER_NAME="Borodin Gregory"
-export GIT_ORGANIZATION_USER_EMAIL="gborodin@pulsepoint.com"
-export GIT_PERSONAL_USER_NAME="Borodin Gregory"
-export GIT_PERSONAL_USER_EMAIL="grihabor@gmail.com"
-
-. ~/.vault-env
-
-# pyenv
-export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
-
-# neovim aliases
-alias vi="nvim"
-alias vim="nvim"
-alias vimdiff="nvim -d"
 
 # fd aliases
 alias fd="fdfind"
-
-# kubectl reporting-api aliases
-alias kure="kubectl --context dm-dev -n rapi-regression"
-alias kupr="kubectl --context dm-dev -n rapi-prerelease"
-alias kuqa="kubectl --context dm-dev -n rapi-qa"
-alias kupd="kubectl --context dm-prod -n reporting-api"
-
-# enable complete alias script
-. ~/projects/complete-alias/complete_alias
-
-# patch aliases to make completion work
-complete -F _complete_alias kure
-complete -F _complete_alias kupr
-complete -F _complete_alias kuqa
-complete -F _complete_alias kupd
 
 # npm
 export NPM_PACKAGES="$HOME/.npm-packages"
 
 
-export EDITOR=nvim
-
 eval "$(zoxide init bash)"
 
-if test -z "$NVIM" && test -n "$TMUX"; then
-    v -c terminal -c startinsert
-fi
 
 export COMPOSE_PROFILES=metrics
 

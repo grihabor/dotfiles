@@ -25,22 +25,7 @@ fi
 if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
-. "$HOME/.cargo/env"
 
-# >>> coursier install directory >>>
-export PATH="$PATH:/home/grihabor/.local/share/coursier/bin"
-# <<< coursier install directory <<<
-
-# path
-export PATH="$PATH:/home/grihabor/bin/google-cloud-sdk/bin"
-export PATH="$PATH:/home/grihabor/.npm-packages/bin/"
-export PATH="$PATH:/usr/local/go/bin/"
-export PATH="$PATH:/home/grihabor/go/bin/"
-export PATH="$HOME/lib/apache-maven/apache-maven-3.9.3/bin:$PATH"
-# ~/.tmux/plugins
-export PATH="$HOME/.tmux/plugins/t-smart-tmux-session-manager/bin:$PATH"
-# ~/.config/tmux/plugins
-export PATH="$HOME/.config/tmux/plugins/t-smart-tmux-session-manager/bin:$PATH"
-export PATH="$HOME/projects/flutter/bin:$PATH"
-export PATH="$HOME/.local/bin:$PATH"
-
+for path in $HOME/.profile.d/*.sh; do
+    . "$path"
+done
