@@ -1,8 +1,9 @@
-vim.g.python3_host_prog = '/home/grihabor/.pyenv/versions/py3nvim/bin/python'
+local python3_host_prog = vim.fn.expand('~/.pyenv/versions/py3nvim/bin/python')
+if vim.fn.filereadable(python3_host_prog) then
+    vim.g.python3_host_prog = python3_host_prog
+end
 
 require('plugins')
-
-
 require('keymaps')
 require('options')
 
