@@ -10,6 +10,11 @@ if ! command -v tmux >> /dev/null; then
     exit 1;
 fi
 
+if ! command -v fzf >> /dev/null; then
+    fzf -h; # print error message
+    exit 1;
+fi
+
 PROJECT_ROOT=$(fdfind --hidden --regex "^.git$" \
     --exclude .cargo \
     --exclude .local \
