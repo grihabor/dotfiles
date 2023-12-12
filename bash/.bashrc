@@ -118,4 +118,3 @@ source /usr/share/bash-completion/completions/git
 # fd aliases
 alias fd="fdfind"
 
-
