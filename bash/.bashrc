@@ -118,6 +118,4 @@ source /usr/share/bash-completion/completions/git
 # fd aliases
 alias fd="fdfind"
 
-# npm
-export NPM_PACKAGES="$HOME/.npm-packages"
 
