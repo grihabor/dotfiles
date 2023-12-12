@@ -73,8 +73,8 @@ return require("packer").startup(function(use)
 	use("hrsh7th/cmp-nvim-lsp-signature-help")
 
 	-- code snippets
-	-- use("SirVer/ultisnips")
-	-- use("quangnguyen30192/cmp-nvim-ultisnips")
+	use("SirVer/ultisnips")
+	use("quangnguyen30192/cmp-nvim-ultisnips")
 
 	-- language parsers
 	use({
