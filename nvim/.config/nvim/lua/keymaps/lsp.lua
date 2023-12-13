@@ -5,7 +5,6 @@ vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
 vim.keymap.set("n", "<space>q", vim.diagnostic.setloclist, opts)
 
 local telescope_builtin = require("telescope.builtin")
-local conform = require("conform")
 
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
@@ -32,11 +31,7 @@ local on_attach = function(args)
 		vim.keymap.set("n", "<space>ca", vim.lsp.buf.code_action, bufopts)
 		-- vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
 
-		if args.use_conform then
-			vim.keymap.set("n", "<space>f", function()
-				conform.format({ bufnr = bufnr })
-			end)
-		else
+		if not args.use_conform then
 			vim.keymap.set("n", "<space>f", function()
 				vim.lsp.buf.format({ async = true })
 			end, bufopts)
@@ -93,3 +88,4 @@ lspconfig.lua_ls.setup({
 	on_attach = on_attach({ use_conform = true }),
 	capabilities = capabilities,
 })
+
