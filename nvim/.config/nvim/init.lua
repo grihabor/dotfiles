@@ -7,6 +7,8 @@ require('plugins')
 require('keymaps')
 require('options')
 
+require("fidget").setup {}
+
 -- vim.g.gruvbox_contrast_dark = "hard"
 -- vim.g.gruvbox_improved_warnings = 1
 -- vim.cmd "autocmd vimenter * ++nested colorscheme gruvbox"

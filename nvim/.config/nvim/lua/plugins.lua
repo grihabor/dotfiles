@@ -62,6 +62,7 @@ return require("packer").startup(function(use)
 
 	-- configurations for Nvim LSP
 	use("neovim/nvim-lspconfig")
+	use("j-hui/fidget.nvim")
 	-- use 'nvim-lua/lsp-status.nvim'
 
 	-- completion framework:
@@ -106,8 +107,11 @@ return require("packer").startup(function(use)
 		requires = { "nvim-tree/nvim-web-devicons" },
 	})
 
+    -- package manager for lsp, linter, formatters
 	use({
 		"williamboman/mason.nvim",
 	})
+    -- debugger
 	use("mfussenegger/nvim-dap")
+
 end)
