@@ -20,5 +20,5 @@ vim.api.nvim_create_user_command("Format", function(args)
 end, { range = true })
 
 vim.keymap.set("n", "<space>f", function()
-    vim.cmd "Format"
+	vim.cmd("Format")
 end)
