@@ -89,3 +89,7 @@ lspconfig.lua_ls.setup({
 	capabilities = capabilities,
 })
 
+lspconfig.jdtls.setup({
+	on_attach = on_attach({ use_conform = true }),
+	capabilities = capabilities,
+})

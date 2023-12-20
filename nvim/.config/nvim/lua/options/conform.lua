@@ -4,6 +4,8 @@ require("conform").setup({
 		-- Conform will run multiple formatters sequentially
 		python = { "isort", "black" },
 		sh = { "shfmt" },
+		java = { "google-java-format" },
+		xml = { "xmlformat" },
 	},
 })
 

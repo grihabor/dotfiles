@@ -98,6 +98,7 @@ return require("packer").startup(function(use)
 		ft = "python",
 	})
 
+	-- formatters
 	use({
 		"stevearc/conform.nvim",
 	})
@@ -107,11 +108,10 @@ return require("packer").startup(function(use)
 		requires = { "nvim-tree/nvim-web-devicons" },
 	})
 
-    -- package manager for lsp, linter, formatters
+	-- package manager for lsp, linter, formatters
 	use({
 		"williamboman/mason.nvim",
 	})
-    -- debugger
+	-- debugger
 	use("mfussenegger/nvim-dap")
-
 end)
