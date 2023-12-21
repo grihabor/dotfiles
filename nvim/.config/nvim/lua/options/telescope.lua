@@ -10,11 +10,16 @@ table.insert(vimgrep_arguments, "--hidden")
 table.insert(vimgrep_arguments, "--glob")
 table.insert(vimgrep_arguments, "!**/.git/*")
 
-if vim.fn.executable("rg") ~= 1 then error("Command 'ripgrep' not found") end
+if vim.fn.executable("rg") ~= 1 then
+	error("Command 'ripgrep' not found")
+end
 telescope.setup({
 	defaults = {
 		-- `hidden = true` is not supported in text grep commands.
 		vimgrep_arguments = vimgrep_arguments,
+		layout_config = {
+			horizontal = { width = 0.99, height = 0.99 },
+		},
 	},
 	pickers = {
 		find_files = {
