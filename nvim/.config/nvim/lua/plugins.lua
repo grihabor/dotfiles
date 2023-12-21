@@ -14,7 +14,10 @@ return require("packer").startup(function(use)
 
 	use("tpope/vim-repeat")
 	use("tpope/vim-surround")
-	-- use 'christoomey/vim-tmux-navigator'
+
+	-- tmux
+    -- use("christoomey/vim-tmux-navigator")
+
 	use("HiPhish/jinja.vim")
 	use("vim-test/vim-test")
 
