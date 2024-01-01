@@ -9,7 +9,7 @@ require("options")
 
 require("fidget").setup({})
 
-ropevim_path = os.getenv("HOME") .. "/.local/share/nvim/site/pack/packer/start/ropevim/ftplugin/python_ropevim.vim"
+ropevim_path = os.getenv("HOME") .. "/.local/share/nvim/site/pack/packer/opt/ropevim/ftplugin/python_ropevim.vim"
 if vim.fn.filereadable(ropevim_path) then
 	vim.cmd("source " .. ropevim_path)
 end
