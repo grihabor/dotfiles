@@ -1,0 +1,10 @@
+[GLOBAL]
+pants_version = "2.18.1"
+backend_packages = [
+  "pants.backend.shell",
+  "pants.backend.shell.lint.shellcheck",
+  "pants.backend.shell.lint.shfmt",
+]
+
+[shellcheck]
+args = ["-x"]

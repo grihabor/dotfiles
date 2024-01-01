@@ -2,18 +2,17 @@
 
 target_directory=$1
 
-if [ "$target_directory" = "" ]
-then
-    echo "Usage: $0 TARGET_DIRECTORY"
-    exit 1
+if [ "$target_directory" = "" ]; then
+	echo "Usage: $0 TARGET_DIRECTORY"
+	exit 1
 fi
 
-projects=$(ls -d $target_directory/*/)
+projects=$(ls -d "$target_directory/*/")
 
-for project in $projects
-do
-    path=$(realpath $project)
-    cd $path
-    git init
-    cd ..
+for project in $projects; do
+	path=$(realpath "$project")
+	(
+		cd "$path" || exit
+		git init
+	)
 done
