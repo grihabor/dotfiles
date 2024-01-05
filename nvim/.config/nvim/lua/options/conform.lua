@@ -6,6 +6,8 @@ require("conform").setup({
 		sh = { "shfmt" },
 		java = { "google-java-format" },
 		xml = { "xmlformat" },
+		sql = { "sqlfluff" },
+		json = { "fixjson" },
 	},
 })
 
