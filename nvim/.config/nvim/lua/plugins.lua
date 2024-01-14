@@ -86,8 +86,14 @@ return require("packer").startup(function(use)
 		"nvim-treesitter/nvim-treesitter",
 		run = ":TSUpdate",
 	})
-	use("IndianBoy42/tree-sitter-just")
 	use("chr4/nginx.vim")
+
+	-- scala
+	use({
+		"scalameta/nvim-metals",
+		requires = { "nvim-lua/plenary.nvim" },
+        config = function() require('config.metals').config() end,
+	})
 
 	-- rust
 	use("simrat39/rust-tools.nvim")

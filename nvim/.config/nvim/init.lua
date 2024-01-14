@@ -6,6 +6,7 @@ end
 require("plugins")
 require("keymaps")
 require("options")
+require("config")
 
 require("fidget").setup({})
 
