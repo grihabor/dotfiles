@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+import logging
+import os
+import subprocess
+import sys
+from pathlib import Path
+from urllib.parse import urlparse
+
+FIREFOX = "/usr/bin/firefox"
+logger = logging.getLogger(__name__)
+
+
+def parse_url(url):
+    try:
+        return urlparse(url)
+    except ValueError:
+        return None
+
+
+def main():
+    logging.basicConfig(
+        filename=Path(os.environ["HOME"]) / ".local" / "firefox.log",
+        filemode="a",
+        level=logging.DEBUG,
+        format='{"ts":"%(asctime)s","lvl":"%(levelname)s","msg":"%(message)s"}',
+    )
+    args = get_args()
+    logger.info("old args: %s", sys.argv)
+    logger.info("new args: %s", args)
+    subprocess.run(args)
+
+
+def get_args() -> list[str]:
+    args = sys.argv[1:]
+    print(args)
+
+    try:
+        first_arg = next(arg for arg in args if not arg.startswith("-"))
+    except StopIteration:
+        return [FIREFOX] + args
+
+    if (url := parse_url(first_arg)) is not None:
+        if "pulsepoint" in url.path:
+            return [FIREFOX, "-P", "pulsepoint"] + args
+
+        else:
+            return [FIREFOX, "-P", "personal"] + args
+
+    return [FIREFOX] + args
+
+
+if __name__ == "__main__":
+    main()
