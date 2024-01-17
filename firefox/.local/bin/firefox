@@ -40,7 +40,11 @@ def get_args() -> list[str]:
         return [FIREFOX] + args
 
     if (url := parse_url(first_arg)) is not None:
-        if "pulsepoint" in url.path:
+        if (
+            "pulsepoint" in url.path
+            or "pulsepoint" in url.hostname
+            or "ppinc" in url.hostname
+        ):
             return [FIREFOX, "-P", "pulsepoint"] + args
 
         else:
