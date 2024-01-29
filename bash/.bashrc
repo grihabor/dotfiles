@@ -115,6 +115,5 @@ source <(kubectl completion bash)
 
 source /usr/share/bash-completion/completions/git
 
-# fd aliases
 alias fd="fdfind"
-
+alias jq="yq -p json -o json"
