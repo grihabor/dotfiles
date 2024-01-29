@@ -43,6 +43,7 @@ def get_args() -> list[str]:
         if (
             "pulsepoint" in url.path
             or "pulsepoint" in url.hostname
+            or "pulse.prod" in url.hostname
             or "ppinc" in url.hostname
         ):
             return [FIREFOX, "-P", "pulsepoint"] + args
