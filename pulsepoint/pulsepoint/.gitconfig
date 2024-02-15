@@ -1,0 +1,6 @@
+[user]
+	name = Borodin Gregory
+	email = gborodin@pulsepoint.com
+
+[core]
+	sshCommand = ssh -i ~/.ssh/id_rsa_pulsepoint -F /dev/null

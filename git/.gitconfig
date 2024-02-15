@@ -1,10 +1,13 @@
-[init]
-	templateDir = /home/grihabor/.git-templates
 [user]
 	name = Borodin Gregory
 	email = grihabor@gmail.com
+
 [alias]
 	co = checkout
 	br = branch
 	ci = commit
 	st = status
+
+[includeIf "gitdir:~/pulsepoint/"]
+	path = ~/pulsepoint/.gitconfig
+
