@@ -64,8 +64,9 @@ return require("packer").startup(function(use)
 	-- use 'folke/tokyonight.nvim'
 	-- use 'sainnhe/sonokai'
 
-	-- configurations for Nvim LSP
+	-- lsp configurations
 	use("neovim/nvim-lspconfig")
+	-- lsp progress messages and notifications
 	use("j-hui/fidget.nvim")
 	-- use 'nvim-lua/lsp-status.nvim'
 
@@ -92,7 +93,9 @@ return require("packer").startup(function(use)
 	use({
 		"scalameta/nvim-metals",
 		requires = { "nvim-lua/plenary.nvim" },
-        config = function() require('config.metals').config() end,
+		config = function()
+			require("config.metals").config()
+		end,
 	})
 
 	-- rust
