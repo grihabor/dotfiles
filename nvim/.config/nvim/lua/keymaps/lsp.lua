@@ -4,11 +4,12 @@ vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
 vim.keymap.set("n", "<space>q", vim.diagnostic.setloclist, opts)
 
-local telescope_builtin = require("telescope.builtin")
+local lsp = {}
 
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
-local on_attach = function(args)
+function lsp.on_attach(args)
+	local telescope_builtin = require("telescope.builtin")
 	return function(client, bufnr)
 		-- Enable completion triggered by <c-x><c-o>
 		vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
@@ -57,11 +58,11 @@ local lspconfig = require("lspconfig")
 --     capabilities=capabilities,
 -- }
 lspconfig.pyright.setup({
-	on_attach = on_attach({ use_conform = true }),
+	on_attach = lsp.on_attach({ use_conform = true }),
 	capabilities = capabilities,
 })
 lspconfig.tsserver.setup({
-	on_attach = on_attach({}),
+	on_attach = lsp.on_attach({}),
 	capabilities = capabilities,
 })
 -- lspconfig.pylsp.setup{
@@ -80,16 +81,18 @@ lspconfig.tsserver.setup({
 --   }
 -- }
 lspconfig.rust_analyzer.setup({
-	on_attach = on_attach({}),
+	on_attach = lsp.on_attach({}),
 	capabilities = capabilities,
 })
 
 lspconfig.lua_ls.setup({
-	on_attach = on_attach({ use_conform = true }),
+	on_attach = lsp.on_attach({ use_conform = true }),
 	capabilities = capabilities,
 })
 
 lspconfig.jdtls.setup({
-	on_attach = on_attach({ use_conform = true }),
+	on_attach = lsp.on_attach({ use_conform = true }),
 	capabilities = capabilities,
 })
+
+return lsp

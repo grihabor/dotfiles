@@ -3,7 +3,7 @@ local util = require("lspconfig.util")
 local configs = require("lspconfig.configs")
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-local on_attach = require("keymaps.lsp")
+local lsp = require("keymaps.lsp")
 
 local root_files = {
 	"pyproject.toml",
@@ -26,7 +26,7 @@ if not configs.pyny then
 	}
 end
 lspconfig.pyny.setup({
-	on_attach = on_attach({ use_conform = true }),
+	on_attach = lsp.on_attach({ use_conform = true }),
 	capabilities = capabilities,
 })
 
