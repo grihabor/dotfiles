@@ -48,6 +48,7 @@ def get_args() -> list[str]:
                 or "pulse.prod" in url.hostname
                 or "ppinc" in url.hostname
                 or "newrelic" in url.hostname
+                or "onenr" in url.hostname
             )
         ):
             return [FIREFOX, "-P", "pulsepoint"] + args
