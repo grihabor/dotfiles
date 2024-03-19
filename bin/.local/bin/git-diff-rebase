@@ -6,6 +6,6 @@ RIGHT=${3:-HEAD}
 FLAGS=--stat
 
 mkdir -p /tmp/git-diff-rebase
-git merge-base $BASE $LEFT | xargs -I{} git diff $FLAGS {} $LEFT > /tmp/git-diff-rebase/left.diff
-git merge-base $BASE $RIGHT | xargs -I{} git diff $FLAGS {} $RIGHT > /tmp/git-diff-rebase/right.diff
+git merge-base "$BASE" "$LEFT" | xargs -I{} git diff $FLAGS {} "$LEFT" >/tmp/git-diff-rebase/left.diff
+git merge-base "$BASE" "$RIGHT" | xargs -I{} git diff $FLAGS {} "$RIGHT" >/tmp/git-diff-rebase/right.diff
 diff -u /tmp/git-diff-rebase/left.diff /tmp/git-diff-rebase/right.diff

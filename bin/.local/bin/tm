@@ -35,9 +35,9 @@ NAME=$(basename "$PROJECT_ROOT")
 if ! tmux has-session -t="$NAME"; then
 	echo "Creating session $NAME"
 	if [ "$TMUX" != "" ]; then
-		FLAGS="-d"
+		FLAGS=(-d)
 	fi
-	tmux new-session $FLAGS \
+	tmux new-session "${FLAGS[@]}" \
 		-c "$PROJECT_ROOT" \
 		-s "$NAME"
 fi

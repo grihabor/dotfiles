@@ -1,3 +1,4 @@
+#!/bin/bash
 ###
 # https://unix.stackexchange.com/questions/1288/preserve-bash-history-in-multiple-terminal-windows
 ###

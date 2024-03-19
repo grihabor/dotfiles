@@ -31,7 +31,12 @@ return require("lazy").setup({
 	"mhinz/neovim-remote",
 
 	-- manage files in regular vim buffer
-	"stevearc/oil.nvim",
+	{
+		"stevearc/oil.nvim",
+		opts = {},
+		-- Optional dependencies
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+	},
 
 	-- git
 	"tpope/vim-fugitive",

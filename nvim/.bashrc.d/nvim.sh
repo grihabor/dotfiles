@@ -7,5 +7,5 @@ alias vimdiff="nvim -d"
 export EDITOR=nvim
 
 if test -z "$NVIM" && test -n "$TMUX"; then
-    v -c terminal -c startinsert
+	v -c terminal -c startinsert
 fi

@@ -8,4 +8,3 @@ require('options.conform')
 -- require("oil").setup()
 -- require("autoclose").setup()
 require("mason").setup()
-

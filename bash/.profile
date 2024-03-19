@@ -29,4 +29,3 @@ fi
 for path in $HOME/.profile.d/*.sh; do
     . "$path"
 done
-

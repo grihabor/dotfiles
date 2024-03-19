@@ -5,8 +5,7 @@ Install git pre-commit hook
 ./install.py
 ```
 
-Install neovim config 
+Install neovim config
 ```bash
 stow nvim
 ```
-

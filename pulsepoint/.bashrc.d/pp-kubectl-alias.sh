@@ -11,4 +11,3 @@ complete -F _complete_alias kure
 complete -F _complete_alias kupr
 complete -F _complete_alias kuqa
 complete -F _complete_alias kupd
-
