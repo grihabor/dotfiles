@@ -12,16 +12,18 @@ return require("packer").startup(function(use)
 	--   end
 	-- }
 
+	-- general purpuse plugins
 	use("tpope/vim-repeat")
 	use("tpope/vim-surround")
 	use("tpope/vim-abolish")
 	use("tpope/vim-unimpaired")
+	use("godlygeek/tabular")
 
 	-- tmux
 	-- use("christoomey/vim-tmux-navigator")
 
-	use("HiPhish/jinja.vim")
-	use("vim-test/vim-test")
+	-- use("HiPhish/jinja.vim")
+	-- use("vim-test/vim-test")
 
 	-- automatically create pairs of braces, brackets, etc.
 	-- use 'm4xshen/autoclose.nvim'
