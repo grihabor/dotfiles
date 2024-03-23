@@ -3,10 +3,11 @@
 	email = grihabor@gmail.com
 
 [alias]
-	co = checkout
 	br = branch
 	ci = commit
 	st = status
+	sw = switch
+	rt = restore
 
 [includeIf "gitdir:~/pulsepoint/"]
 	path = ~/pulsepoint/.gitconfig
