@@ -1,10 +1,10 @@
 local builtin = require("telescope.builtin")
 options = { path_display = { "truncate" } }
 vim.keymap.set("n", "<leader>ff", function()
-	builtin.find_files(options)
+    builtin.find_files(options)
 end, {})
 vim.keymap.set("n", "<leader>fg", function()
-	builtin.live_grep(options)
+    builtin.live_grep(options)
 end, {})
 vim.keymap.set("n", "<leader>fs", builtin.grep_string, {})
 vim.keymap.set("n", "<leader>fb", builtin.buffers, {})

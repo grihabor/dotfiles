@@ -3,14 +3,14 @@
 --
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
-	vim.fn.system({
-		"git",
-		"clone",
-		"--filter=blob:none",
-		"https://github.com/folke/lazy.nvim.git",
-		"--branch=stable", -- latest stable release
-		lazypath,
-	})
+    vim.fn.system({
+        "git",
+        "clone",
+        "--filter=blob:none",
+        "https://github.com/folke/lazy.nvim.git",
+        "--branch=stable", -- latest stable release
+        lazypath,
+    })
 end
 
 vim.opt.rtp:prepend(lazypath)
@@ -20,7 +20,7 @@ vim.opt.rtp:prepend(lazypath)
 --
 local python3_host_prog = os.getenv("HOME") .. "/.pyenv/versions/py3nvim/bin/python"
 if vim.fn.executable(python3_host_prog) then
-	vim.g.python3_host_prog = python3_host_prog
+    vim.g.python3_host_prog = python3_host_prog
 end
 
 require("plugins")
@@ -32,7 +32,7 @@ require("fidget").setup({})
 
 ropevim_path = os.getenv("HOME") .. "/.local/share/nvim/lazy/ropevim/ftplugin/python_ropevim.vim"
 if vim.fn.filereadable(ropevim_path) then
-	vim.cmd("source " .. ropevim_path)
+    vim.cmd("source " .. ropevim_path)
 end
 
 -- vim.g.gruvbox_contrast_dark = "hard"
