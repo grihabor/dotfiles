@@ -1,48 +1,48 @@
 #!/bin/bash
 
 if ! command -v fdfind >>/dev/null; then
-	fdfind -h # print error message
-	exit 1
+    fdfind -h # print error message
+    exit 1
 fi
 
 if ! command -v tmux >>/dev/null; then
-	tmux -h # print error message
-	exit 1
+    tmux -h # print error message
+    exit 1
 fi
 
 if ! command -v fzf >>/dev/null; then
-	fzf -h # print error message
-	exit 1
+    fzf -h # print error message
+    exit 1
 fi
 
 PROJECT_ROOT=$(fdfind --hidden --regex "^.git$" \
-	--exclude .cargo \
-	--exclude .local \
-	--type d \
-	--min-depth 2 \
-	--max-depth 3 \
-	"$HOME" |
-	xargs dirname |
-	fzf)
+    --exclude .cargo \
+    --exclude .local \
+    --type d \
+    --min-depth 2 \
+    --max-depth 3 \
+    "$HOME" |
+    xargs dirname |
+    fzf)
 
 fzf_exit_code=$?
 if [ $fzf_exit_code -ne 0 ]; then
-	printf "fzf exit code %d\n" $fzf_exit_code
-	exit 1
+    printf "fzf exit code %d\n" $fzf_exit_code
+    exit 1
 fi
 
 NAME=$(basename "$PROJECT_ROOT")
 if ! tmux has-session -t="$NAME"; then
-	echo "Creating session $NAME"
-	if [ "$TMUX" != "" ]; then
-		FLAGS=(-d)
-	fi
-	tmux new-session "${FLAGS[@]}" \
-		-c "$PROJECT_ROOT" \
-		-s "$NAME"
+    echo "Creating session $NAME"
+    if [ "$TMUX" != "" ]; then
+        FLAGS=(-d)
+    fi
+    tmux new-session "${FLAGS[@]}" \
+        -c "$PROJECT_ROOT" \
+        -s "$NAME"
 fi
 if [ "$TMUX" == "" ]; then
-	tmux attach -t "$NAME"
+    tmux attach -t "$NAME"
 else
-	tmux switch-client -t "$NAME"
+    tmux switch-client -t "$NAME"
 fi
