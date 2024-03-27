@@ -15,6 +15,7 @@
   "nvim-cmp": { "branch": "main", "commit": "04e0ca376d6abdbfc8b52180f8ea236cbfddf782" },
   "nvim-dap": { "branch": "master", "commit": "c1695e500c7d552a0a19953a9aefcc89178fb1af" },
   "nvim-dap-python": { "branch": "master", "commit": "66560f0ebddf96604f7037e1efad3ba6942761e6" },
+  "nvim-lint": { "branch": "master", "commit": "2669aabb8362fdc36aced5ba864b7135636ea863" },
   "nvim-lspconfig": { "branch": "master", "commit": "eb012f03bb3b4aca9e875d146008b923d0e07e65" },
   "nvim-metals": { "branch": "main", "commit": "4f9bf0c821092f20dd34c1a4ea5b07b0500ff089" },
   "nvim-treesitter": { "branch": "master", "commit": "567a76780cd4f982dae1ec57e3dad6174bef3680" },

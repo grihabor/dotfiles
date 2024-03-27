@@ -91,4 +91,9 @@ lspconfig.jdtls.setup({
     capabilities = capabilities,
 })
 
+lspconfig.yamlls.setup({
+    on_attach = lsp.on_attach({ use_conform = true }),
+    capabilities = capabilities,
+})
+
 return lsp
