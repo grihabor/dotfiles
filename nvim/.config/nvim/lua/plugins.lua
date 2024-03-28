@@ -1,15 +1,8 @@
 return require("lazy").setup({
 
-    -- file explorer
-    -- use {
-    --   'nvim-tree/nvim-tree.lua',
-    --   requires = {
-    --     'nvim-tree/nvim-web-devicons',
-    --   },
-    --   config = function()
-    --     require("nvim-tree").setup {}
-    --   end
-    -- }
+    { "folke/neodev.nvim", opts = {
+        library = { plugins = { "nvim-dap-ui" }, types = true },
+    } },
 
     -- general purpuse plugins
     "tpope/vim-repeat",
@@ -80,6 +73,14 @@ return require("lazy").setup({
 
     -- package manager for lsp, linter, formatters
     "williamboman/mason.nvim", -- debugger
-    "mfussenegger/nvim-dap",
-    "mfussenegger/nvim-dap-python",
+
+    require("config.dap"),
+    {
+        "mfussenegger/nvim-dap-python",
+        config = function()
+            require("dap-python").setup("~/.pyenv/versions/3.11.6/bin/python")
+            require("dap-python").test_runner = "pytest"
+        end,
+    },
+    { "rcarriga/nvim-dap-ui", dependencies = { "mfussenegger/nvim-dap" } },
 })

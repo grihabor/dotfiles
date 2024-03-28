@@ -7,7 +7,7 @@ require("conform").setup({
         java = { "google-java-format" },
         xml = { "xmlformat" },
         sql = { "sqlfluff" },
-        json = { "fixjson" },
+        json = { "jq" },
     },
 })
 

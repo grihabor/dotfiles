@@ -3,8 +3,3 @@ require("options.lsp_diagnostics")
 require("options.completion")
 require("options.treesitter")
 require("options.conform")
--- require('options.nvim_tree')
-
--- require("oil").setup()
--- require("autoclose").setup()
-require("mason").setup()
