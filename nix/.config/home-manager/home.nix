@@ -66,6 +66,21 @@
     # EDITOR = "emacs";
   };
 
-  # Let Home Manager install and manage itself.
-  programs.home-manager.enable = true;
+  programs = {
+    # Let Home Manager install and manage itself.
+    home-manager.enable = true;
+
+    direnv = {
+      enable = true;
+      enableBashIntegration = true;
+      nix-direnv.enable = true;
+    };
+
+    bash = {
+      enable = true;
+      bashrcExtra = ''
+        . ~/.bashrc.old
+      '';
+    };
+  };
 }
