@@ -19,7 +19,11 @@ return require("lazy").setup({
     "mhinz/neovim-remote", -- manage files in regular vim buffer
     {
         "stevearc/oil.nvim",
-        opts = {},
+        opts = {
+            view_options = {
+                show_hidden = true,
+            },
+        },
         -- Optional dependencies
         dependencies = { "nvim-tree/nvim-web-devicons" },
     }, -- git
