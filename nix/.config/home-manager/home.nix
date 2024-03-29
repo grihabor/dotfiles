@@ -78,6 +78,9 @@
 
     bash = {
       enable = true;
+      profileExtra = ''
+        . ~/.profile.old
+      '';
       bashrcExtra = ''
         . ~/.bashrc.old
       '';
