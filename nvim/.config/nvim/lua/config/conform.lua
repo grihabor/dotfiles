@@ -4,12 +4,11 @@ return {
     cmd = { "ConformInfo" },
     keys = {
         {
-            -- Customize or remove this keymap to your liking
             "<space>f",
             function()
                 require("conform").format({ async = true, lsp_fallback = true })
             end,
-            mode = "",
+            mode = "n",
             desc = "Format buffer",
         },
     },
