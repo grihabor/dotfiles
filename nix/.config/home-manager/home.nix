@@ -22,10 +22,16 @@
     # # "Hello, world!" when run.
     # pkgs.hello
 
+    pkgs.alejandra
+    pkgs.black
     pkgs.google-java-format
+    pkgs.isort
     pkgs.kubectl
+    pkgs.lua-language-server
     pkgs.neovim
+    pkgs.neovim-remote
     pkgs.nil
+    pkgs.nodePackages.pyright
     pkgs.tree-sitter
     pkgs.xmlformat
 

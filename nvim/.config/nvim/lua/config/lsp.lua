@@ -1,6 +1,6 @@
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
-function on_attach(args)
+local on_attach = function()
     local telescope_builtin = require("telescope.builtin")
     return function(client, bufnr)
         -- Enable completion triggered by <c-x><c-o>
@@ -23,12 +23,6 @@ function on_attach(args)
         vim.keymap.set("n", "<space>rn", vim.lsp.buf.rename, bufopts)
         vim.keymap.set("n", "<space>ca", vim.lsp.buf.code_action, bufopts)
         -- vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
-
-        if not args.use_conform then
-            vim.keymap.set("n", "<space>f", function()
-                vim.lsp.buf.format({ async = true })
-            end, bufopts)
-        end
 
         vim.keymap.set("n", "gr", function()
             telescope_builtin.lsp_references()
@@ -81,27 +75,32 @@ return function()
     })
 
     lspconfig.lua_ls.setup({
-        on_attach = on_attach({ use_conform = true }),
+        on_attach = on_attach(),
         capabilities = capabilities,
     })
 
     lspconfig.jdtls.setup({
-        on_attach = on_attach({ use_conform = true }),
+        on_attach = on_attach(),
         capabilities = capabilities,
     })
 
     lspconfig.yamlls.setup({
-        on_attach = on_attach({ use_conform = true }),
+        on_attach = on_attach(),
+        capabilities = capabilities,
+    })
+
+    lspconfig.nil_ls.setup({
+        on_attach = on_attach(),
         capabilities = capabilities,
     })
 
     lspconfig.pyright.setup({
-        on_attach = on_attach({ use_conform = true }),
+        on_attach = on_attach(),
         capabilities = capabilities,
     })
 
     -- require("config.pyny")({
-    --     on_attach = on_attach({ use_conform = true }),
+    --     on_attach = on_attach(),
     --     capabilities = capabilities,
     -- })
 end

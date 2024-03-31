@@ -74,7 +74,7 @@ return require("lazy").setup({
     -- 	branch = "stable",
     -- })
     { "python-rope/ropevim", ft = "python" }, -- formatters
-    "stevearc/conform.nvim",
+    require("config.conform"),
     require("config.lint"),
 
     { "folke/trouble.nvim", dependencies = { "nvim-tree/nvim-web-devicons" } },
