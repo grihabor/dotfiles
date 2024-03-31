@@ -21,9 +21,13 @@
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
     # pkgs.hello
-    pkgs.nil
-    pkgs.neovim
+
+    pkgs.google-java-format
     pkgs.kubectl
+    pkgs.neovim
+    pkgs.nil
+    pkgs.tree-sitter
+    pkgs.xmlformat
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
