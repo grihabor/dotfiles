@@ -45,9 +45,13 @@ return require("lazy").setup({
     "ellisonleao/gruvbox.nvim", -- use 'Mofiqul/dracula.nvim'
     -- use 'folke/tokyonight.nvim'
     -- use 'sainnhe/sonokai'
+
     -- lsp configurations
-    "neovim/nvim-lspconfig", -- lsp progress messages and notifications
-    "j-hui/fidget.nvim", -- use 'nvim-lua/lsp-status.nvim'
+    { "neovim/nvim-lspconfig", config = require("config.lsp") },
+
+    -- lsp progress messages and notifications
+    "j-hui/fidget.nvim",
+
     -- completion framework:
     "hrsh7th/cmp-nvim-lsp",
     "hrsh7th/cmp-buffer",
