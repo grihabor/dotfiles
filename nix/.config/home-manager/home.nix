@@ -1,6 +1,8 @@
-{ config, pkgs, ... }:
-
 {
+  config,
+  pkgs,
+  ...
+}: {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "grihabor";
@@ -26,12 +28,16 @@
     pkgs.black
     pkgs.google-java-format
     pkgs.isort
+    pkgs.jq
     pkgs.kubectl
     pkgs.lua-language-server
     pkgs.neovim
     pkgs.neovim-remote
     pkgs.nil
     pkgs.nodePackages.pyright
+    pkgs.shfmt
+    pkgs.sqlfluff
+    pkgs.stylua
     pkgs.tree-sitter
     pkgs.xmlformat
 
@@ -39,7 +45,7 @@
     # # overrides. You can do that directly here, just don't forget the
     # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
     # # fonts?
-    (pkgs.nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
+    (pkgs.nerdfonts.override {fonts = ["JetBrainsMono"];})
 
     # # You can also create simple shell scripts directly inside your
     # # configuration. For example, this adds a command 'my-hello' to your
