@@ -66,7 +66,7 @@ return require("lazy").setup({
     "quangnguyen30192/cmp-nvim-ultisnips",
 
     -- language parsers
-    { "nvim-treesitter/nvim-treesitter", config = require("options.treesitter") },
+    require("options.treesitter"),
     -- "chr4/nginx.vim",
 
     -- scala
