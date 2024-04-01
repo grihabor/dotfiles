@@ -26,6 +26,7 @@
 
     pkgs.alejandra
     pkgs.black
+    pkgs.fd
     pkgs.google-java-format
     pkgs.isort
     pkgs.jq
@@ -35,6 +36,7 @@
     pkgs.neovim-remote
     pkgs.nil
     pkgs.nodePackages.pyright
+    pkgs.ripgrep
     pkgs.shfmt
     pkgs.sqlfluff
     pkgs.stylua

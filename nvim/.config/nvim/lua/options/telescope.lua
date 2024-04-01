@@ -1,21 +1,3 @@
-local telescope = require("telescope")
-local config = require("telescope.config")
-local actions = require("telescope.actions")
-local action_layout = require("telescope.actions.layout")
-
--- Clone the default Telescope configuration
-local vimgrep_arguments = { unpack(config.values.vimgrep_arguments) }
-
--- I want to search in hidden/dot files.
-table.insert(vimgrep_arguments, "--hidden")
--- I don't want to search in the `.git` directory.
-table.insert(vimgrep_arguments, "--glob")
-table.insert(vimgrep_arguments, "!**/.git/*")
-
-if vim.fn.executable("rg") ~= 1 then
-    error("Command 'ripgrep' not found")
-end
-
 -- https://github.com/nvim-telescope/telescope.nvim/issues/2201#issuecomment-1284691502
 local ts_select_dir_for_grep = function(prompt_bufnr)
     local action_state = require("telescope.actions.state")
@@ -45,29 +27,63 @@ local ts_select_dir_for_grep = function(prompt_bufnr)
     })
 end
 
-telescope.setup({
-    defaults = {
-        -- `hidden = true` is not supported in text grep commands.
-        vimgrep_arguments = vimgrep_arguments,
-        layout_config = {
-            horizontal = { width = 0.99, height = 0.99, preview_width = 0.5 },
-        },
-        mappings = {
-            i = {
-                ["<esc>"] = actions.close,
-                ["<M-p>"] = action_layout.toggle_preview,
-                ["<C-f>"] = ts_select_dir_for_grep,
+return {
+    "nvim-telescope/telescope.nvim",
+    tag = "0.1.5",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    config = function()
+        local actions = require("telescope.actions")
+        local config = require("telescope.config")
+        local action_layout = require("telescope.actions.layout")
+
+        require("telescope").setup({
+            defaults = {
+                -- `hidden = true` is not supported in text grep commands.
+                vimgrep_arguments = (function()
+                    -- Clone the default Telescope configuration
+                    local vimgrep_arguments = { unpack(config.values.vimgrep_arguments) }
+
+                    -- I want to search in hidden/dot files.
+                    table.insert(vimgrep_arguments, "--hidden")
+                    -- I don't want to search in the `.git` directory.
+                    table.insert(vimgrep_arguments, "--glob")
+                    table.insert(vimgrep_arguments, "!**/.git/*")
+
+                    return vimgrep_arguments
+                end)(),
+                layout_config = {
+                    horizontal = { width = 0.99, height = 0.99, preview_width = 0.5 },
+                },
+                mappings = {
+                    i = {
+                        ["<esc>"] = actions.close,
+                        ["<M-p>"] = action_layout.toggle_preview,
+                        ["<C-f>"] = ts_select_dir_for_grep,
+                    },
+                    n = {
+                        ["<C-f>"] = ts_select_dir_for_grep,
+                        ["<M-p>"] = action_layout.toggle_preview,
+                    },
+                },
             },
-            n = {
-                ["<C-f>"] = ts_select_dir_for_grep,
-                ["<M-p>"] = action_layout.toggle_preview,
+            pickers = {
+                find_files = {
+                    -- `hidden = true` will still show the inside of `.git/` as it's not `.gitignore`d.
+                    find_command = { "rg", "--files", "--hidden", "--glob", "!**/.git/*" },
+                },
             },
-        },
-    },
-    pickers = {
-        find_files = {
-            -- `hidden = true` will still show the inside of `.git/` as it's not `.gitignore`d.
-            find_command = { "rg", "--files", "--hidden", "--glob", "!**/.git/*" },
-        },
-    },
-})
+        })
+
+        local builtin = require("telescope.builtin")
+        options = { path_display = { "truncate" } }
+        vim.keymap.set("n", "<leader>ff", function()
+            builtin.find_files(options)
+        end, {})
+        vim.keymap.set("n", "<leader>fg", function()
+            builtin.live_grep(options)
+        end, {})
+        vim.keymap.set("n", "<leader>fs", builtin.grep_string, {})
+        vim.keymap.set("n", "<leader>fb", builtin.buffers, {})
+        vim.keymap.set("n", "<leader>fh", builtin.help_tags, {})
+    end,
+}

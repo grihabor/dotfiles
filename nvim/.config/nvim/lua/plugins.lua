@@ -32,11 +32,7 @@ return require("lazy").setup({
     }, -- git
     "tpope/vim-fugitive", -- autosave
     "Pocco81/auto-save.nvim", -- fuzzy finder
-    {
-        "nvim-telescope/telescope.nvim",
-        tag = "0.1.5",
-        dependencies = { "nvim-lua/plenary.nvim" },
-    },
+    require("options.telescope"),
     {
         "nvim-telescope/telescope-file-browser.nvim",
         dependencies = {

@@ -1,5 +1,3 @@
-require("keymaps.completion")
-require("keymaps.lsp")
 require("keymaps.telescope")
 require("keymaps.terminal")
 require("keymaps.vim_test")

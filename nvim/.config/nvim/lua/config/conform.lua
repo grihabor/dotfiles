@@ -8,11 +8,11 @@ local formatters_by_ft = {
     sql = { "sqlfluff" },
     xml = { "xmlformat" },
 }
-local function get_keys(table)
+local function get_keys(tbl)
     local keyset = {}
     local n = 0
 
-    for k, _ in pairs(table) do
+    for k, _ in pairs(tbl) do
         n = n + 1
         keyset[n] = k
     end
