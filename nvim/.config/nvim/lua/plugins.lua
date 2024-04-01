@@ -1,8 +1,11 @@
 return require("lazy").setup({
 
-    { "folke/neodev.nvim", opts = {
-        library = { plugins = { "nvim-dap-ui" }, types = true },
-    } },
+    {
+        "folke/neodev.nvim",
+        opts = {
+            library = { plugins = { "nvim-dap-ui" }, types = true },
+        },
+    },
 
     -- general purpuse plugins
     "tpope/vim-repeat",
@@ -56,9 +59,13 @@ return require("lazy").setup({
     "hrsh7th/cmp-nvim-lsp",
     "hrsh7th/cmp-buffer",
     "hrsh7th/cmp-path",
-    "hrsh7th/nvim-cmp",
+    require("keymaps.completion"),
     "hrsh7th/cmp-nvim-lua",
     "hrsh7th/cmp-nvim-lsp-signature-help", -- code snippets
+    {
+        "hrsh7th/cmp-cmdline",
+        dependencies = { "hrsh7th/nvim-cmp" },
+    },
     "SirVer/ultisnips",
     "quangnguyen30192/cmp-nvim-ultisnips",
 
