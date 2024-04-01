@@ -59,7 +59,7 @@ return require("lazy").setup({
     "hrsh7th/cmp-nvim-lsp",
     "hrsh7th/cmp-buffer",
     "hrsh7th/cmp-path",
-    require("keymaps.completion"),
+    require("config.completion"),
     "hrsh7th/cmp-nvim-lua",
     "hrsh7th/cmp-nvim-lsp-signature-help", -- code snippets
     {
