@@ -28,8 +28,6 @@ require("keymaps")
 require("options")
 require("config")
 
-require("fidget").setup({})
-
 ropevim_path = os.getenv("HOME") .. "/.local/share/nvim/lazy/ropevim/ftplugin/python_ropevim.vim"
 if vim.fn.filereadable(ropevim_path) then
     vim.cmd("source " .. ropevim_path)
@@ -62,3 +60,27 @@ vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
 
 vim.opt.swapfile = false
+
+-- LSP Diagnostics Options Setup
+local sign = function(opts)
+    vim.fn.sign_define(opts.name, { texthl = opts.name, text = opts.text, numhl = "" })
+end
+
+sign({ name = "DiagnosticSignError", text = "" })
+sign({ name = "DiagnosticSignWarn", text = "" })
+sign({ name = "DiagnosticSignHint", text = "" })
+sign({ name = "DiagnosticSignInfo", text = "" })
+
+vim.diagnostic.config({
+    virtual_text = false,
+    signs = true,
+    update_in_insert = true,
+    underline = true,
+    severity_sort = false,
+    float = { border = "rounded", source = "always", header = "", prefix = "" },
+})
+
+vim.cmd([[
+set signcolumn=yes
+autocmd CursorHold * lua vim.diagnostic.open_float(nil, { focusable = false })
+]])
