@@ -32,7 +32,7 @@ return require("lazy").setup({
     }, -- git
     "tpope/vim-fugitive", -- autosave
     "Pocco81/auto-save.nvim", -- fuzzy finder
-    require("options.telescope"),
+    require("config.telescope"),
     {
         "nvim-telescope/telescope-file-browser.nvim",
         dependencies = {
@@ -66,7 +66,7 @@ return require("lazy").setup({
     "quangnguyen30192/cmp-nvim-ultisnips",
 
     -- language parsers
-    require("options.treesitter"),
+    require("config.treesitter"),
     -- "chr4/nginx.vim",
 
     -- scala
