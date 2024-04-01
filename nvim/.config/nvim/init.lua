@@ -23,10 +23,8 @@ if vim.fn.executable(python3_host_prog) then
     vim.g.python3_host_prog = python3_host_prog
 end
 
-require("plugins")
+require("lazy").setup(require("plugins"), {})
 require("keymaps")
-require("options")
-require("config")
 
 ropevim_path = os.getenv("HOME") .. "/.local/share/nvim/lazy/ropevim/ftplugin/python_ropevim.vim"
 if vim.fn.filereadable(ropevim_path) then
