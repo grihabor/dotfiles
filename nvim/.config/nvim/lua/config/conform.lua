@@ -23,21 +23,15 @@ return {
     "stevearc/conform.nvim",
     ft = get_keys(formatters_by_ft),
     opts = {
-        -- formatters_by_ft = formatters_by_ft,
-        -- formatters = {
-        --     black = {
-        --         command = "/nix/store/7vmbm0dpl7z73ybgbq7xybxfzy5vvfxz-python3.11-black-23.9.1/bin/black",
-        --     },
-        -- },
+        formatters_by_ft = formatters_by_ft,
     },
     init = function()
         -- Register pants BUILD files.
         vim.filetype.add({ filename = { ["BUILD"] = "python" } })
     end,
-    config = function()
-        require("conform").setup({
-            formatters_by_ft = formatters_by_ft,
-        })
+    config = function(_, opts)
+        require("conform").setup(opts)
+
         vim.keymap.set("n", "<space>f", function()
             require("conform").format({ async = true, lsp_fallback = true, quiet = false })
         end, bufopts)
