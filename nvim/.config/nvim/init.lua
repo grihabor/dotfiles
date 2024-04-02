@@ -15,20 +15,14 @@ end
 
 vim.opt.rtp:prepend(lazypath)
 
+require("lazy").setup(require("plugins"), {})
+
 --
 -- python
 --
 local python3_host_prog = os.getenv("HOME") .. "/.pyenv/versions/py3nvim/bin/python"
 if vim.fn.executable(python3_host_prog) then
     vim.g.python3_host_prog = python3_host_prog
-end
-
-require("lazy").setup(require("plugins"), {})
-require("keymaps")
-
-ropevim_path = os.getenv("HOME") .. "/.local/share/nvim/lazy/ropevim/ftplugin/python_ropevim.vim"
-if vim.fn.filereadable(ropevim_path) then
-    vim.cmd("source " .. ropevim_path)
 end
 
 -- vim.g.gruvbox_contrast_dark = "hard"
