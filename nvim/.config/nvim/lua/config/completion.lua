@@ -1,5 +1,49 @@
+local array = require("array")
+local plugins = {
+    {
+        -- from current buffer
+        dependency = "hrsh7th/cmp-buffer",
+        source = { name = "buffer", keyword_length = 2 },
+    },
+    {
+        -- from language server
+        dependency = "hrsh7th/cmp-nvim-lsp",
+        source = { name = "nvim_lsp", keyword_length = 3 },
+    },
+    {
+        -- display function signatures with current parameter emphasized
+        dependency = "hrsh7th/cmp-nvim-lsp-signature-help",
+        source = { name = "nvim_lsp_signature_help" },
+    },
+    {
+        -- complete neovim's Lua runtime API such vim.lsp.*
+        dependency = "hrsh7th/cmp-nvim-lua",
+        source = { name = "nvim_lua", keyword_length = 2 },
+    },
+    {
+        -- file paths
+        dependency = "hrsh7th/cmp-path",
+        source = { name = "path" },
+    },
+    {
+        -- ultisnips integration
+        dependency = "quangnguyen30192/cmp-nvim-ultisnips",
+        source = { name = "ultisnips", keyword_length = 2 },
+    },
+}
+
+local dependencies = array.map(plugins, function(p)
+    return p.dependency
+end)
+table.insert(dependencies, "hrsh7th/cmp-cmdline")
+
+local sources = array.map(plugins, function(p)
+    return p.source
+end)
+
 return {
     "hrsh7th/nvim-cmp",
+    dependencies = dependencies,
 
     init = function()
         -- Set completeopt to have a better completion experience
@@ -38,16 +82,7 @@ return {
                     select = true,
                 }),
             },
-            -- Installed sources:
-            sources = {
-                { name = "path" }, -- file paths
-                { name = "nvim_lsp", keyword_length = 3 }, -- from language server
-                { name = "nvim_lsp_signature_help" }, -- display function signatures with current parameter emphasized
-                { name = "nvim_lua", keyword_length = 2 }, -- complete neovim's Lua runtime API such vim.lsp.*
-                { name = "buffer", keyword_length = 2 }, -- source current buffer
-                { name = "ultisnips", keyword_length = 2 }, -- nvim-cmp source for vim-vsnip
-                { name = "calc" }, -- source for math calculation
-            },
+            sources = sources,
             window = {
                 completion = cmp.config.window.bordered(),
                 documentation = cmp.config.window.bordered(),

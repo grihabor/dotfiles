@@ -1,3 +1,4 @@
+dict = require("dict")
 local formatters_by_ft = {
     java = { "google-java-format" },
     json = { "jq" },
@@ -8,20 +9,9 @@ local formatters_by_ft = {
     sql = { "sqlfluff" },
     xml = { "xmlformat" },
 }
-local function get_keys(tbl)
-    local keyset = {}
-    local n = 0
-
-    for k, _ in pairs(tbl) do
-        n = n + 1
-        keyset[n] = k
-    end
-
-    return keyset
-end
 return {
     "stevearc/conform.nvim",
-    ft = get_keys(formatters_by_ft),
+    ft = dict.keys(formatters_by_ft),
     opts = {
         formatters_by_ft = formatters_by_ft,
     },
