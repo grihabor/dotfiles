@@ -25,13 +25,6 @@ if vim.fn.executable(python3_host_prog) then
     vim.g.python3_host_prog = python3_host_prog
 end
 
--- vim.g.gruvbox_contrast_dark = "hard"
--- vim.g.gruvbox_improved_warnings = 1
--- vim.cmd "autocmd vimenter * ++nested colorscheme gruvbox"
-
-vim.o.background = "dark"
-vim.cmd([[colorscheme gruvbox]])
-
 -- vim.cmd[[colorscheme dracula]]
 -- vim.cmd[[colorscheme tokyonight]]
 -- vim.cmd[[colorscheme sonokai]]
