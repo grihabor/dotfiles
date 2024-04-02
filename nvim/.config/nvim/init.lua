@@ -82,3 +82,9 @@ vim.cmd([[
 set signcolumn=yes
 autocmd CursorHold * lua vim.diagnostic.open_float(nil, { focusable = false })
 ]])
+
+-- match tmux-sensible
+vim.keymap.set("n", "<C-w>x", "<C-w>c")
+vim.keymap.set("n", "<C-w>c", "<Nop>")
+vim.keymap.set("n", "<C-w>|", "<C-w>v")
+vim.keymap.set("n", "<C-w>-", "<C-w>s")
