@@ -37,6 +37,7 @@
     pkgs.nil
     pkgs.nodePackages.pyright
     pkgs.pre-commit
+    pkgs.python312
     pkgs.ripgrep
     pkgs.shfmt
     pkgs.sqlfluff

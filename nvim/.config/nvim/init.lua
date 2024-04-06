@@ -20,7 +20,7 @@ require("lazy").setup(require("plugins"), {})
 --
 -- python
 --
-local python3_host_prog = os.getenv("HOME") .. "/.pyenv/versions/py3nvim/bin/python"
+local python3_host_prog = os.getenv("HOME") .. "/.nix-profile/bin/python3.12"
 if vim.fn.executable(python3_host_prog) then
     vim.g.python3_host_prog = python3_host_prog
 end
