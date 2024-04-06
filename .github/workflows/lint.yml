@@ -6,7 +6,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: sudo apt-get update
-      - run: sudo apt-get install -y shellcheck=0.10.0
+      - run: sudo apt-get install -y shellcheck
       - run: find bin/ -type f | xargs shellcheck
 
   shfmt:
