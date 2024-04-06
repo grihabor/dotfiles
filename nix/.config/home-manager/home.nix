@@ -36,6 +36,7 @@
     pkgs.neovim-remote
     pkgs.nil
     pkgs.nodePackages.pyright
+    pkgs.pre-commit
     pkgs.ripgrep
     pkgs.shfmt
     pkgs.sqlfluff
@@ -106,5 +107,7 @@
         . ~/.bashrc.old
       '';
     };
+
+    pyenv.enable = true;
   };
 }
