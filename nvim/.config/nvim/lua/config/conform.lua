@@ -8,6 +8,7 @@ local formatters_by_ft = {
     sh = { "shfmt" },
     sql = { "sqlfluff" },
     xml = { "xmlformat" },
+    rust = {},
 }
 return {
     "stevearc/conform.nvim",
