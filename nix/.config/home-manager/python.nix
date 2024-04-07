@@ -1,8 +1,8 @@
 # https://github.com/NixOS/nixpkgs/blob/master/doc/languages-frameworks/python.section.md#overriding-python-packages-overriding-python-packages
 final: prev: (let
   python = let
-    packageOverrides = self: super: {
-      pynvim = super.pynvim.overridePythonAttrs (old: rec {
+    packageOverrides = python-final: python-prev: {
+      pynvim = python-prev.pynvim.overridePythonAttrs (old: rec {
         version = "0.5.0";
         src = prev.fetchPypi {
           pname = "pynvim";

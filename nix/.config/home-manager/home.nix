@@ -24,7 +24,15 @@
     # # "Hello, world!" when run.
     # pkgs.hello
 
-    (pkgs.python3.withPackages (ps: [ps.pynvim]))
+    (
+      pkgs.python3.withPackages (ps: let
+        ropemode = ps.callPackage ./ropemode.nix {};
+        ropevim = ps.callPackage ./ropevim.nix {ropemode = ropemode;};
+      in [
+        ps.pynvim
+        ropevim
+      ])
+    )
 
     pkgs.alejandra
     pkgs.black
