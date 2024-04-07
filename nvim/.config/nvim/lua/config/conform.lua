@@ -16,10 +16,6 @@ return {
     opts = {
         formatters_by_ft = formatters_by_ft,
     },
-    init = function()
-        -- Register pants BUILD files.
-        vim.filetype.add({ filename = { ["BUILD"] = "python" } })
-    end,
     config = function(_, opts)
         require("conform").setup(opts)
 

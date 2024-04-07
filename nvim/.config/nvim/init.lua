@@ -15,6 +15,11 @@ end
 
 vim.opt.rtp:prepend(lazypath)
 
+vim.filetype.add({
+    extension = { tpl = "gotmpl" }, -- go template files
+    filename = { ["BUILD"] = "python" }, -- pants BUILD files
+})
+
 require("lazy").setup(require("plugins"), {})
 
 --
