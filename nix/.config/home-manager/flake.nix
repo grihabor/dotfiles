@@ -16,9 +16,7 @@
     ...
   }: let
     system = "x86_64-linux";
-    pkgs =
-      nixpkgs.legacyPackages.${system}
-      // (import ./python.nix {inherit (nixpkgs) fetchPypi;});
+    pkgs = nixpkgs.legacyPackages.${system}.extend (import ./python.nix);
   in {
     homeConfigurations."grihabor" = home-manager.lib.homeManagerConfiguration {
       inherit pkgs;
