@@ -17,5 +17,5 @@ final: prev: (let
       self = python;
     };
 in {
-  python-custom = python.withPackages (ps: [ps.pip ps.pynvim]);
+  python3 = python;
 })

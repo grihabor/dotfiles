@@ -24,6 +24,8 @@
     # # "Hello, world!" when run.
     # pkgs.hello
 
+    (pkgs.python3.withPackages (ps: [ps.pynvim]))
+
     pkgs.alejandra
     pkgs.black
     pkgs.fd
@@ -43,12 +45,6 @@
     pkgs.stylua
     pkgs.tree-sitter
     pkgs.xmlformat
-    (builtins.trace (builtins.intersectAttrs {
-        python = "";
-        python-custom = "";
-      }
-      pkgs)
-    pkgs.python-custom)
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
