@@ -76,17 +76,17 @@ return require("lazy").setup({
     require("config.metals"),
     -- rust
     "simrat39/rust-tools.nvim",
-    {
-        -- python refactoring
-        "python-rope/ropevim",
-        ft = "python",
-        config = function()
-            ropevim_path = os.getenv("HOME") .. "/.local/share/nvim/lazy/ropevim/ftplugin/python_ropevim.vim"
-            if vim.fn.filereadable(ropevim_path) then
-                vim.cmd("source " .. ropevim_path)
-            end
-        end,
-    },
+    -- {
+    --     -- python refactoring
+    --     "python-rope/ropevim",
+    --     ft = "python",
+    --     config = function()
+    --         ropevim_path = os.getenv("HOME") .. "/.local/share/nvim/lazy/ropevim/ftplugin/python_ropevim.vim"
+    --         if vim.fn.filereadable(ropevim_path) then
+    --             vim.cmd("source " .. ropevim_path)
+    --         end
+    --     end,
+    -- },
 
     -- formatters
     require("config.conform"),
