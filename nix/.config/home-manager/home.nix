@@ -43,32 +43,7 @@
     pkgs.stylua
     pkgs.tree-sitter
     pkgs.xmlformat
-
-    (let
-      python = let
-        packageOverrides = self: super: {
-          pynvim = super.pynvim.overridePythonAttrs (old: rec {
-            version = "0.5.0";
-            src = pkgs.fetchPypi {
-              pname = "pynvim";
-              inherit version;
-              hash = "sha256-6AoR9vXRlMake+pBNbkLVfrKJNo1RNp89KX3uo+wkhU=";
-            };
-          });
-        };
-      in
-        pkgs.python312.override {
-          inherit packageOverrides;
-          self = python;
-        };
-    in (
-      python.withPackages
-      (
-        python-pkgs: [
-          python-pkgs.pynvim
-        ]
-      )
-    ))
+    pkgs.python
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
