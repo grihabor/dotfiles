@@ -117,5 +117,7 @@
         . ~/.bashrc.old
       '';
     };
+
+    pyenv.enable = true;
   };
 }
