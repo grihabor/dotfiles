@@ -1,0 +1,46 @@
+#!/usr/bin/env python3.11
+import argparse
+import logging
+import subprocess as sp
+from dataclasses import dataclass
+
+logger = logging.getLogger(__name__)
+
+
+@dataclass
+class LogEntry:
+    message: str
+
+
+def main():
+    logging.basicConfig(level=logging.INFO)
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-o", "--onto", required=True)
+    parser.add_argument("-b", "--branch", default="HEAD")
+    parser.add_argument("--shell", default="/bin/bash")
+
+    args = parser.parse_args()
+
+    base = git_merge_base(args.onto, args.branch)
+    for entry in git_log(start=base, stop=args.branch):
+        logging.info(entry.message)
+        command = [args.shell, "-c", entry.message]
+        sp.check_call(command)
+        sp.check_call(["git", "add", "."])
+        sp.check_call(["git", "commit", "--allow-empty", "-m", entry.message])
+
+
+def git_log(start: str, stop: str) -> list[LogEntry]:
+    command = ["git", "log", "--format=%B", f"{start}..{stop}"]
+    result = reversed(sp.check_output(command).decode("utf-8").splitlines())
+    return [LogEntry(message=line.strip()) for line in result if line]
+
+
+def git_merge_base(left: str, right: str) -> str:
+    command = ["git", "merge-base", left, right]
+    return sp.check_output(command).decode("utf-8").strip()
+
+
+if __name__ == "__main__":
+    main()
