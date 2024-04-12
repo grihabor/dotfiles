@@ -27,6 +27,23 @@ local on_attach = function()
         vim.keymap.set("n", "gr", function()
             telescope_builtin.lsp_references()
         end)
+
+        -- all workspace diagnostics
+        vim.keymap.set("n", "<leader>qd", vim.diagnostic.setqflist)
+
+        -- all workspace errors
+        vim.keymap.set("n", "<leader>qe", function()
+            vim.diagnostic.setqflist({ severity = "E" })
+        end)
+
+        -- all workspace warnings
+        vim.keymap.set("n", "<leader>qw", function()
+            vim.diagnostic.setqflist({ severity = "W" })
+        end)
+
+        -- buffer diagnostics only
+        vim.keymap.set("n", "<leader>qb", vim.diagnostic.setloclist)
+
         vim.keymap.set("n", "<space>ws", function()
             vim.ui.input({ prompt = "Workspace symbols: " }, function(query)
                 telescope_builtin.lsp_workspace_symbols({ query = query })
@@ -70,7 +87,7 @@ return function()
     --   }
     -- }
     lspconfig.rust_analyzer.setup({
-        on_attach = on_attach({}),
+        on_attach = on_attach(),
         capabilities = capabilities,
     })
 

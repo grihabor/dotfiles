@@ -42,7 +42,7 @@ return require("lazy").setup({
             "nvim-lua/plenary.nvim",
         },
     },
-    "RRethy/vim-illuminate",
+    -- "RRethy/vim-illuminate",
     {
         -- color theme
         "ellisonleao/gruvbox.nvim",
