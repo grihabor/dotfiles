@@ -101,9 +101,42 @@ return require("lazy").setup({
     {
         "mfussenegger/nvim-dap-python",
         config = function()
-            require("dap-python").setup("~/.pyenv/versions/3.11.6/bin/python")
+            require("dap-python").setup("~/.nix-profile/bin/python3.11")
             require("dap-python").test_runner = "pytest"
+
+            vim.keymap.set("n", "<leader>tf", function()
+                require("dap-python").test_method()
+            end)
+            vim.keymap.set("n", "<leader>tc", function()
+                require("dap-python").test_class()
+            end)
+            vim.keymap.set("n", "<leader>ts", function()
+                require("dap-python").debug_selection()
+            end)
         end,
     },
-    { "rcarriga/nvim-dap-ui", dependencies = { "mfussenegger/nvim-dap" } },
+    {
+        "rcarriga/nvim-dap-ui",
+        dependencies = {
+            "mfussenegger/nvim-dap",
+            "nvim-neotest/nvim-nio",
+        },
+        config = function(opts)
+            local dap, dapui = require("dap"), require("dapui")
+            dapui.setup(opts)
+
+            dap.listeners.before.attach.dapui_config = function()
+                dapui.open()
+            end
+            dap.listeners.before.launch.dapui_config = function()
+                dapui.open()
+            end
+            dap.listeners.before.event_terminated.dapui_config = function()
+                dapui.close()
+            end
+            dap.listeners.before.event_exited.dapui_config = function()
+                dapui.close()
+            end
+        end,
+    },
 })

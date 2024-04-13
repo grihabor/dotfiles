@@ -25,12 +25,16 @@
     # pkgs.hello
 
     (
-      pkgs.python3.withPackages (ps: let
+      pkgs.python311.withPackages (ps: let
         ropemode = ps.callPackage ./ropemode.nix {};
         ropevim = ps.callPackage ./ropevim.nix {ropemode = ropemode;};
+        pytest-custom_exit_code = ps.callPackage ./pytest-custom_exit_code.nix {};
       in [
+        (ps.debugpy.overrideAttrs (self: super: {pytestCheckPhase = ''true'';}))
         ps.pynvim
-        ropevim
+        ps.pytest
+        pytest-custom_exit_code
+        # ropevim
       ])
     )
 
