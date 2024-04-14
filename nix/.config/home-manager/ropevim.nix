@@ -9,19 +9,20 @@
 buildPythonPackage rec {
   pname = "ropevim";
   version = "0.8.1";
-  pyproject = false;
+  pyproject = true;
 
   src = fetchPypi {
     inherit pname version;
     hash = "sha256-d5Xc9JvlT2FyfPt+W/w+I+9NwJwbZXIXMLH72v1iNyU=";
   };
 
-  build-system = [
+  nativeBuildInputs = [
     setuptools
     wheel
   ];
 
-  dependencies = [
+  propagatedBuildInputs = [
+    setuptools
     rope
     ropemode
   ];

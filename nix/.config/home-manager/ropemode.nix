@@ -8,18 +8,18 @@
 buildPythonPackage rec {
   pname = "ropemode";
   version = "0.6.1";
-  pyproject = false;
+  pyproject = true;
 
   src = fetchPypi {
     inherit pname version;
     hash = "sha256-mbjSLfcb41jhDMQ1+5cUDlelDEK4Rr1KckkcV0TdBHA=";
   };
 
-  build-system = [
+  nativeBuildInputs = [
     setuptools
     setuptools-scm
     wheel
   ];
 
-  dependencies = [];
+  propagatedBuildInputs  = [];
 }

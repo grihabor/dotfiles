@@ -34,7 +34,7 @@
         ps.pynvim
         ps.pytest
         pytest-custom_exit_code
-        # ropevim
+        ropevim
       ])
     )
 
