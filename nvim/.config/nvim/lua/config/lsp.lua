@@ -52,7 +52,7 @@ local on_attach = function()
     end
 end
 
-return function()
+local config = function()
     local opts = { noremap = true, silent = true }
     vim.keymap.set("n", "<space>e", vim.diagnostic.open_float, opts)
     vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
@@ -86,10 +86,10 @@ return function()
     --     }
     --   }
     -- }
-    lspconfig.rust_analyzer.setup({
-        on_attach = on_attach(),
-        capabilities = capabilities,
-    })
+    -- lspconfig.rust_analyzer.setup({
+    --     on_attach = on_attach(),
+    --     capabilities = capabilities,
+    -- })
 
     lspconfig.lua_ls.setup({
         on_attach = on_attach(),
@@ -121,3 +121,8 @@ return function()
     --     capabilities = capabilities,
     -- })
 end
+
+return {
+    on_attach = on_attach,
+    config = config,
+}

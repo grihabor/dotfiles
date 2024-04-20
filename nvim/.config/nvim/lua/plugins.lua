@@ -3,7 +3,7 @@ return require("lazy").setup({
     {
         "folke/neodev.nvim",
         opts = {
-            library = { plugins = { "nvim-dap-ui" }, types = true },
+            library = { plugins = { "neotest", "nvim-dap-ui" }, types = true },
         },
     },
 
@@ -53,7 +53,10 @@ return require("lazy").setup({
     },
 
     -- lsp configurations
-    { "neovim/nvim-lspconfig", config = require("config.lsp") },
+    {
+        "neovim/nvim-lspconfig",
+        config = require("config.lsp").config,
+    },
 
     -- lsp progress messages and notifications
     "j-hui/fidget.nvim",
@@ -75,7 +78,7 @@ return require("lazy").setup({
     -- scala
     require("config.metals"),
     -- rust
-    "simrat39/rust-tools.nvim",
+    require("config.rustaceanvim"),
     {
         -- python refactoring
         "python-rope/ropevim",
@@ -98,6 +101,7 @@ return require("lazy").setup({
     "williamboman/mason.nvim", -- debugger
 
     require("config.dap"),
+    require("config.neotest"),
     {
         "mfussenegger/nvim-dap-python",
         config = function()
