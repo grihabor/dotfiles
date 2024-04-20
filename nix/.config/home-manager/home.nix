@@ -41,6 +41,9 @@
     pkgs.alejandra
     pkgs.black
     pkgs.fd
+    pkgs.fzf
+    pkgs.gcc
+    pkgs.git
     pkgs.google-java-format
     pkgs.isort
     pkgs.jq
@@ -54,7 +57,9 @@
     pkgs.ripgrep
     pkgs.shfmt
     pkgs.sqlfluff
+    pkgs.stow
     pkgs.stylua
+    pkgs.tmux
     pkgs.tree-sitter
     pkgs.xmlformat
     pkgs.yaml-language-server
