@@ -10,7 +10,9 @@ return {
 
             local cfg = require("rustaceanvim.config")
             return {
-                on_attach = require("config.lsp"),
+                server = {
+                    on_attach = require("config.lsp").on_attach,
+                },
                 dap = {
                     adapter = cfg.get_codelldb_adapter(codelldb_path, liblldb_path),
                 },
