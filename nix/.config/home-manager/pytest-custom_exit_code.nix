@@ -3,6 +3,7 @@
   fetchPypi,
   setuptools,
   wheel,
+  pytest,
 }:
 buildPythonPackage rec {
   pname = "pytest-custom_exit_code";
@@ -19,5 +20,7 @@ buildPythonPackage rec {
     wheel
   ];
 
-  dependencies = [];
+  dependencies = [
+    pytest
+  ];
 }

@@ -47,6 +47,7 @@
     pkgs.google-java-format
     pkgs.isort
     pkgs.jq
+    pkgs.kitty
     pkgs.kubectl
     pkgs.lua-language-server
     pkgs.neovim
@@ -61,6 +62,7 @@
     pkgs.stylua
     pkgs.tmux
     pkgs.tree-sitter
+    pkgs.vscode-extensions.vadimcn.vscode-lldb
     pkgs.xmlformat
     pkgs.yaml-language-server
 
@@ -122,6 +124,10 @@
       enable = true;
       profileExtra = ''
         . ~/.profile.old
+
+        export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${pkgs.lib.makeLibraryPath [
+          pkgs.stdenv.cc.cc
+        ]}
       '';
       bashrcExtra = ''
         . ~/.bashrc.old

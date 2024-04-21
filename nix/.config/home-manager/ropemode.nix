@@ -4,6 +4,7 @@
   setuptools,
   setuptools-scm,
   wheel,
+  rope,
 }:
 buildPythonPackage rec {
   pname = "ropemode";
@@ -21,5 +22,7 @@ buildPythonPackage rec {
     wheel
   ];
 
-  propagatedBuildInputs  = [];
+  propagatedBuildInputs  = [
+    rope
+  ];
 }
