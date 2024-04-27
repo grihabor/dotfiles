@@ -33,6 +33,7 @@
         (ps.debugpy.overrideAttrs (self: super: {pytestCheckPhase = ''true'';}))
         ps.pynvim
         ps.pytest
+        ps.sphinx
         pytest-custom_exit_code
         ropevim
       ])
