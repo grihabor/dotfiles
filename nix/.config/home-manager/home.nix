@@ -126,7 +126,7 @@
       profileExtra = ''
         . ~/.profile.old
 
-        export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${pkgs.lib.makeLibraryPath [
+        # export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${pkgs.lib.makeLibraryPath [
           pkgs.stdenv.cc.cc
         ]}
       '';
