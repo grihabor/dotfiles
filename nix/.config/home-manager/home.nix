@@ -2,7 +2,23 @@
   config,
   pkgs,
   ...
-}: {
+}: let
+  # pants = pkgs.callPackage ./pants/default.nix {};
+  python = (
+    pkgs.python311.withPackages (ps: let
+      ropemode = ps.callPackage ./ropemode.nix {};
+      ropevim = ps.callPackage ./ropevim.nix {ropemode = ropemode;};
+      pytest-custom_exit_code = ps.callPackage ./pytest-custom_exit_code.nix {};
+    in [
+      (ps.debugpy.overrideAttrs (self: super: {pytestCheckPhase = ''true'';}))
+      ps.pynvim
+      ps.pytest
+      ps.sphinx
+      pytest-custom_exit_code
+      ropevim
+    ])
+  );
+in {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "grihabor";
@@ -24,20 +40,8 @@
     # # "Hello, world!" when run.
     # pkgs.hello
 
-    (
-      pkgs.python311.withPackages (ps: let
-        ropemode = ps.callPackage ./ropemode.nix {};
-        ropevim = ps.callPackage ./ropevim.nix {ropemode = ropemode;};
-        pytest-custom_exit_code = ps.callPackage ./pytest-custom_exit_code.nix {};
-      in [
-        (ps.debugpy.overrideAttrs (self: super: {pytestCheckPhase = ''true'';}))
-        ps.pynvim
-        ps.pytest
-        ps.sphinx
-        pytest-custom_exit_code
-        ropevim
-      ])
-    )
+    # pants
+    python
 
     pkgs.alejandra
     pkgs.black
