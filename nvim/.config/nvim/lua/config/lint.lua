@@ -3,6 +3,7 @@ return {
     config = function()
         require("lint").linters_by_ft = {
             yaml = { "yamllint" },
+            sql = { "sqlfluff" },
         }
 
         vim.api.nvim_create_autocmd({ "BufWritePost" }, {
