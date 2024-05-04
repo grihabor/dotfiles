@@ -55,6 +55,7 @@ in {
     pkgs.kitty
     pkgs.kubectl
     pkgs.lua-language-server
+    pkgs.meld
     pkgs.neovim
     pkgs.neovim-remote
     pkgs.nil
