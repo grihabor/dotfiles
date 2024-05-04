@@ -43,7 +43,16 @@ in
     ];
 
     installPhase = ''
-      ${scie-lift}/bin/science lift build --use-jump ${scie-jump-src} ./package/pbt.toml
+      export HOME=/tmp
+      ${scie-lift}/bin/science lift \
+        --include-provenance \
+        --file scie-pants.bin=${scie-pants}/bin/scie-pants \
+        build \
+        --use-jump ${scie-jump-src} \
+        --dest-dir $out/ \
+        --use-platform-suffix \
+        --hash sha256 \
+        package/scie-pants.toml
     '';
   }
 # TODO
