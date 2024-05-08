@@ -14,6 +14,7 @@ local ts_select_dir_for_grep = function(prompt_bufnr)
                 local dir = entry_path:is_dir() and entry_path or entry_path:parent()
                 local relative = dir:make_relative(vim.fn.getcwd())
                 local absolute = dir:absolute()
+                vim.g.telescope_search_dir = absolute
 
                 live_grep({
                     results_title = relative .. "/",
@@ -75,11 +76,18 @@ return {
         })
 
         local builtin = require("telescope.builtin")
-        options = { path_display = { "truncate" } }
         vim.keymap.set("n", "<leader>ff", function()
+            local options = { path_display = { "truncate" } }
+            if vim.g.telescope_search_dir then
+                options["search_dirs"] = { vim.g.telescope_search_dir }
+            end
             builtin.find_files(options)
         end, {})
         vim.keymap.set("n", "<leader>fg", function()
+            local options = { path_display = { "truncate" } }
+            if vim.g.telescope_search_dir then
+                options["search_dirs"] = { vim.g.telescope_search_dir }
+            end
             builtin.live_grep(options)
         end, {})
         vim.keymap.set("n", "<leader>fs", builtin.grep_string, {})
