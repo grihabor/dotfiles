@@ -19,6 +19,7 @@ vim.filetype.add({
     extension = {
         tpl = "gotmpl", -- go template files
         hql = "sql", -- hive query language
+        mdx = "markdown", -- https://mdxjs.com/
     },
     filename = {
         ["BUILD"] = "python", -- pants BUILD files
