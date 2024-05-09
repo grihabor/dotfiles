@@ -8,24 +8,24 @@
   protobuf,
   rust-bin,
   makeRustPlatform,
+  rustVersion ? "1.75.0",
 }: let
-  rustVersion = "1.75.0";
   cargo = rust-bin.stable.${rustVersion}.default;
   rustc = rust-bin.stable.${rustVersion}.default;
   rustPlatform = makeRustPlatform {
     inherit cargo rustc;
   };
-in
-  stdenv.mkDerivation rec {
-    pname = "pants";
-    version = "release_2.20.0";
-
-    src = fetchFromGitHub {
-      owner = "pantsbuild";
-      repo = "pants";
-      rev = version;
-      hash = "sha256-tzpeYxzDfHbDkGAOCXjQfaLf6834c34zJS3DwahSMwI=";
-    };
+  version = "2.20.0";
+  revision = "release_${version}";
+  src = fetchFromGitHub {
+    owner = "pantsbuild";
+    repo = "pants";
+    rev = revision;
+    hash = "sha256-tzpeYxzDfHbDkGAOCXjQfaLf6834c34zJS3DwahSMwI=";
+  };
+  pants_engine = stdenv.mkDerivation rec {
+    inherit src version;
+    pname = "pants-engine";
 
     cargoDeps = rustPlatform.importCargoLock {
       # curl -L -o pants-cargo.lock https://raw.githubusercontent.com/pantsbuild/pants/release_2.20.0/src/rust/engine/Cargo.lock
@@ -43,17 +43,62 @@ in
 
     sourceRoot = "${src.name}/src/rust/engine";
 
-    cargoBuildType = "release";
-
     nativeBuildInputs = [
       python39
       protobuf
       rustPlatform.cargoSetupHook
-      # rustPlatform.cargoBuildHook
     ];
 
     buildPhase = ''
       export CARGO_BUILD_RUSTC=${rustc}/bin/rustc
-      ${cargo}/bin/cargo build --all-features
+
+      # https://github.com/pantsbuild/pants/blob/release_2.20.0/src/rust/engine/.cargo/config#L4
+      export RUSTFLAGS="--cfg tokio_unstable"
+
+      # https://github.com/pantsbuild/pants/blob/release_2.20.0/src/rust/engine/BUILD#L32
+      ${cargo}/bin/cargo build \
+        --features=extension-module \
+        --release \
+        -p engine \
+        -p client
     '';
-  }
+
+    installPhase = ''
+
+      mkdir -p $out/lib/
+      cp target/release/libengine.so $out/lib/native_engine.so
+
+      mkdir -p $out/bin/
+      cp target/release/pants $out/bin/native_client
+    '';
+  };
+in
+  with python39.pkgs;
+    buildPythonApplication {
+      inherit version src;
+      pname = "pants";
+      pyproject = true;
+
+      build-system = [
+        setuptools
+      ];
+      # curl -L -O https://raw.githubusercontent.com/pantsbuild/pants/release_2.20.0/3rdparty/python/requirements.txt
+
+      configurePhase = ''
+        cat > pyproject.toml << EOF
+        [build-system]
+        requires = ["setuptools"]
+        build-backend = "setuptools.build_meta"
+
+        [project]
+        name = "pants"
+        version = "$version"
+
+        [tool.setuptools.packages.find]
+        where = ["src/python"]
+        include = ["pants", "pants.*"]
+        namespaces = false
+
+        EOF
+      '';
+    }
