@@ -43,6 +43,7 @@ in {
     # pants
     python
 
+    pkgs.alacritty
     pkgs.alejandra
     pkgs.black
     pkgs.fd
@@ -52,7 +53,6 @@ in {
     pkgs.google-java-format
     pkgs.isort
     pkgs.jq
-    pkgs.kitty
     pkgs.kubectl
     pkgs.lua-language-server
     pkgs.meld
