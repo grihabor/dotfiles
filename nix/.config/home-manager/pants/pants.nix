@@ -105,6 +105,14 @@ in
 
       # https://github.com/pantsbuild/pants/blob/release_2.20.0/src/python/pants/BUILD#L27-L39
       configurePhase = ''
+        cat > setup.py << EOF
+        from setuptools import setup, Extension
+
+        setup(
+            ext_modules=[Extension(name="dummy_twAH5rHkMN", sources=[])],
+        )
+        EOF
+
         cat > pyproject.toml << EOF
         [build-system]
         requires = ["setuptools"]
@@ -136,16 +144,29 @@ in
         cat > MANIFEST.in << EOF
         include src/python/pants/_version/VERSION
         include src/python/pants/engine/internals/native_engine.so
+        include src/python/pants/bin/native_client
+        recursive-include src/python/pants *.lock
         EOF
 
         find src/python -type d -exec touch {}/__init__.py \;
       '';
 
       prePatch = ''
-        find src/python/
         patch -p1 --batch -u -i ${./patch.txt}
       '';
+
       preBuild = ''
+
+        # https://github.com/pantsbuild/pants/blob/release_2.20.0/src/python/pants/engine/internals/BUILD#L28
         cp ${pants-engine}/lib/native_engine.so src/python/pants/engine/internals/
+
+        # https://github.com/pantsbuild/pants/blob/release_2.20.0/build-support/bin/rust/bootstrap_code.sh#L34
+        cp ${pants-engine}/bin/native_client src/python/pants/bin/
+      '';
+
+      postInstall = ''
+        wrapProgram "$out/bin/pants" \
+          --set NO_SCIE_WARNING 1 \
+          --run ". .pants.bootstrap"
       '';
     }
