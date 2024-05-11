@@ -1,7 +1,7 @@
 {
   lib,
   fetchFromGitHub,
-  python39,
+  python310,
   rustPlatform,
   stdenv,
   cargo,
@@ -10,6 +10,7 @@
   makeRustPlatform,
   rustVersion ? "1.75.0",
 }: let
+  python = python310;
   cargo = rust-bin.stable.${rustVersion}.default;
   rustc = rust-bin.stable.${rustVersion}.default;
   rustPlatform = makeRustPlatform {
@@ -23,7 +24,7 @@
     rev = revision;
     hash = "sha256-tzpeYxzDfHbDkGAOCXjQfaLf6834c34zJS3DwahSMwI=";
   };
-  pants_engine = stdenv.mkDerivation rec {
+  pants-engine = stdenv.mkDerivation rec {
     inherit src version;
     pname = "pants-engine";
 
@@ -44,7 +45,7 @@
     sourceRoot = "${src.name}/src/rust/engine";
 
     nativeBuildInputs = [
-      python39
+      python
       protobuf
       rustPlatform.cargoSetupHook
     ];
@@ -73,17 +74,34 @@
     '';
   };
 in
-  with python39.pkgs;
+  with python.pkgs;
     buildPythonApplication {
       inherit version src;
       pname = "pants";
       pyproject = true;
+      dontWrapPythonPrograms = true;
 
       build-system = [
         setuptools
       ];
-      # curl -L -O https://raw.githubusercontent.com/pantsbuild/pants/release_2.20.0/3rdparty/python/requirements.txt
 
+      # curl -L -O https://raw.githubusercontent.com/pantsbuild/pants/release_2.20.0/3rdparty/python/requirements.txt
+      dependencies = [
+        ansicolors
+        packaging
+        pex
+        psutil
+        python-lsp-jsonrpc
+        pyyaml
+        setproctitle
+        setuptools
+        toml
+        typing-extensions
+        fasteners
+        pytest
+      ];
+
+      # https://github.com/pantsbuild/pants/blob/release_2.20.0/src/python/pants/BUILD#L27-L39
       configurePhase = ''
         cat > pyproject.toml << EOF
         [build-system]
@@ -93,12 +111,43 @@ in
         [project]
         name = "pants"
         version = "$version"
+        requires-python = "==3.10.*"
+        dependencies = [
+          "packaging",
+        ]
+
+        [tool.setuptools]
+        include-package-data = true
 
         [tool.setuptools.packages.find]
         where = ["src/python"]
         include = ["pants", "pants.*"]
         namespaces = false
 
+        [project.scripts]
+        pants = "pants.bin.pants_loader:main"
+
         EOF
+
+        echo ${version} > src/python/pants/_version/VERSION
+
+        cat > MANIFEST.in << EOF
+        include src/python/pants/_version/VERSION
+        include src/python/pants/engine/internals/native_engine.so
+        EOF
+
+        find src/python -name "*.py" |
+          while IFS= read -r path; do
+            dirname $path;
+          done |
+          sort |
+          uniq |
+          while IFS= read -r dir; do
+            touch "$dir/__init__.py";
+          done
+      '';
+
+      preBuild = ''
+        cp ${pants-engine}/lib/native_engine.so src/python/pants/engine/internals/
       '';
     }
