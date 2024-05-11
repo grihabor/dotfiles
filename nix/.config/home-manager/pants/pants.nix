@@ -1,10 +1,7 @@
 {
-  lib,
   fetchFromGitHub,
   python310,
-  rustPlatform,
   stdenv,
-  cargo,
   protobuf,
   rust-bin,
   makeRustPlatform,
@@ -29,8 +26,8 @@
     pname = "pants-engine";
 
     cargoDeps = rustPlatform.importCargoLock {
-      # curl -L -o pants-cargo.lock https://raw.githubusercontent.com/pantsbuild/pants/release_2.20.0/src/rust/engine/Cargo.lock
-      lockFile = ./pants-cargo.lock;
+      # curl -L -o Cargo.lock https://raw.githubusercontent.com/pantsbuild/pants/release_2.20.0/src/rust/engine/Cargo.lock
+      lockFile = ./Cargo.lock;
       outputHashes = {
         "console-0.15.7" = "sha256-EsUtBySVj2aoGOPBteDKCY7PCehJoqEJXpjOyQlpCf4=";
         "deepsize-0.2.0" = "sha256-E73xdzYfpJASps3yz6sjL48Kimy44F2LvxndWzgV3dU=";
