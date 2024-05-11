@@ -14,11 +14,17 @@
     inherit cargo rustc;
   };
   version = "2.20.0";
-  revision = "release_${version}";
+  revision = "patch-for-nix";
+  # src = fetchFromGitHub {
+  #   owner = "grihabor";
+  #   repo = "pants";
+  #   rev = revision;
+  #   hash = "sha256-FZ6QgFpO+sapThgUl+WOyLSYIQ3VNiQ5H4iZxGbR3FA=";
+  # };
   src = fetchFromGitHub {
     owner = "pantsbuild";
     repo = "pants";
-    rev = revision;
+    rev = "release_${version}";
     hash = "sha256-tzpeYxzDfHbDkGAOCXjQfaLf6834c34zJS3DwahSMwI=";
   };
   pants-engine = stdenv.mkDerivation rec {
@@ -76,7 +82,6 @@ in
       inherit version src;
       pname = "pants";
       pyproject = true;
-      dontWrapPythonPrograms = true;
 
       build-system = [
         setuptools
@@ -133,17 +138,13 @@ in
         include src/python/pants/engine/internals/native_engine.so
         EOF
 
-        find src/python -name "*.py" |
-          while IFS= read -r path; do
-            dirname $path;
-          done |
-          sort |
-          uniq |
-          while IFS= read -r dir; do
-            touch "$dir/__init__.py";
-          done
+        find src/python -type d -exec touch {}/__init__.py \;
       '';
 
+      prePatch = ''
+        find src/python/
+        patch -p1 --batch -u -i ${./patch.txt}
+      '';
       preBuild = ''
         cp ${pants-engine}/lib/native_engine.so src/python/pants/engine/internals/
       '';
