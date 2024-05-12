@@ -3,7 +3,6 @@
   pkgs,
   ...
 }: let
-  # pants = pkgs.callPackage ./pants/default.nix {};
   python = (
     pkgs.python311.withPackages (ps: let
       ropemode = ps.callPackage ./ropemode.nix {};
@@ -40,7 +39,6 @@ in {
     # # "Hello, world!" when run.
     # pkgs.hello
 
-    # pants
     python
 
     pkgs.alacritty
