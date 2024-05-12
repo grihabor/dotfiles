@@ -31,7 +31,7 @@
       # the path to your home.nix.
       modules = [
         {
-          home.packages = [pants-bin.packages.${system}."release_2.20.0"];
+          home.packages = [pants-bin.packages.${system}."release_2.20.1"];
         }
         ./home.nix
       ];
