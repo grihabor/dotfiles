@@ -14,13 +14,6 @@
     inherit cargo rustc;
   };
   version = "2.20.0";
-  revision = "patch-for-nix";
-  # src = fetchFromGitHub {
-  #   owner = "grihabor";
-  #   repo = "pants";
-  #   rev = revision;
-  #   hash = "sha256-FZ6QgFpO+sapThgUl+WOyLSYIQ3VNiQ5H4iZxGbR3FA=";
-  # };
   src = fetchFromGitHub {
     owner = "pantsbuild";
     repo = "pants";
