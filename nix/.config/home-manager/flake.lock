@@ -79,11 +79,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1715538896,
-        "narHash": "sha256-AUhFAJluiFtkuN/EqeuZZzedyJnlu+BQ+WiI1OWD67Q=",
+        "lastModified": 1715592462,
+        "narHash": "sha256-fQgxdF5w2p0A16f82PvM+BBnCS4zNjaShPtXajESdv8=",
         "owner": "grihabor",
         "repo": "pants-nix",
-        "rev": "6d99d14b2d6b2cef24a08dfeed6b4e01718848dc",
+        "rev": "33db5749af3658d2d86c77207d7139c52ede1b19",
         "type": "github"
       },
       "original": {
