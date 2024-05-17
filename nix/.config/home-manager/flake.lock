@@ -41,16 +41,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1715542476,
-        "narHash": "sha256-FF593AtlzQqa8JpzrXyRws4CeKbc5W86o8tHt4nRfIg=",
+        "lastModified": 1715787315,
+        "narHash": "sha256-cYApT0NXJfqBkKcci7D9Kr4CBYZKOQKDYA23q8XNuWg=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "44072e24566c5bcc0b7aa9178a0104f4cfffab19",
+        "rev": "33d1e753c82ffc557b4a585c77de43d4c922ebb5",
         "type": "github"
       },
       "original": {
         "owner": "nixos",
-        "ref": "nixos-23.11",
+        "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -79,11 +79,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1715701354,
-        "narHash": "sha256-AqZnOj1Jf9XRn5eDRIzDL1NgzkPtDjb21kVuql2poo4=",
+        "lastModified": 1715958065,
+        "narHash": "sha256-33DxKosg2FNqSw4wtiC5lrQQ025smHk1+Gc7AggBG8Y=",
         "owner": "grihabor",
         "repo": "pants-nix",
-        "rev": "f0b78f1ced4afcc708d26928fc834d3cb8a60fb6",
+        "rev": "80f7b5eec1804716bf3cef3159d42d619a6b1991",
         "type": "github"
       },
       "original": {

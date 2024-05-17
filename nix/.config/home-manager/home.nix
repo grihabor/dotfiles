@@ -56,6 +56,7 @@ in {
     pkgs.neovim-remote
     pkgs.nil
     pkgs.nodePackages.pyright
+    pkgs.pmd
     pkgs.pre-commit
     pkgs.ripgrep
     pkgs.ruff
