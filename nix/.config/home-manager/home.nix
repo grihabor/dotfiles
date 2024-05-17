@@ -43,13 +43,11 @@ in {
 
     pkgs.alacritty
     pkgs.alejandra
-    pkgs.black
     pkgs.fd
     pkgs.fzf
     pkgs.gcc
     pkgs.git
     pkgs.google-java-format
-    pkgs.isort
     pkgs.jq
     pkgs.kubectl
     pkgs.lua-language-server
@@ -60,6 +58,7 @@ in {
     pkgs.nodePackages.pyright
     pkgs.pre-commit
     pkgs.ripgrep
+    pkgs.ruff
     pkgs.shfmt
     pkgs.sqlfluff
     pkgs.stow

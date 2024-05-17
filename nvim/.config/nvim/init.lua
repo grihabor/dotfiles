@@ -24,7 +24,10 @@ vim.filetype.add({
     filename = {
         ["BUILD"] = "python", -- pants BUILD files
         ["pdm.lock"] = "toml", -- pdm lock files
-        ["Dockerfile.*"] = "dockerfile",
+    },
+    pattern = {
+        ["BUILD.*$"] = "python", -- pants BUILD files
+        ["Dockerfile.*$"] = "dockerfile",
     },
 })
 
