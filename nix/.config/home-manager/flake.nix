@@ -21,7 +21,11 @@
     ...
   }: let
     system = "x86_64-linux";
-    pkgs = nixpkgs.legacyPackages.${system}.extend (import ./python.nix);
+    pkgs = (nixpkgs
+      .legacyPackages
+      .${system}
+      .extend (import ./overlays/python.nix))
+    .extend (import ./overlays/ruff.nix);
     pants-bin = pants-nix;
   in {
     homeConfigurations."grihabor" = home-manager.lib.homeManagerConfiguration {
