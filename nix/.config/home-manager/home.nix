@@ -5,11 +5,13 @@
 }: let
   python = (
     pkgs.python311.withPackages (ps: let
+      debugpy = ps.debugpy.overrideAttrs (self: super: {pytestCheckPhase = ''true'';});
       ropemode = ps.callPackage ./ropemode.nix {};
       ropevim = ps.callPackage ./ropevim.nix {ropemode = ropemode;};
       pytest-custom_exit_code = ps.callPackage ./pytest-custom_exit_code.nix {};
     in [
-      (ps.debugpy.overrideAttrs (self: super: {pytestCheckPhase = ''true'';}))
+      debugpy
+      ps.pip-tools
       ps.pynvim
       ps.pytest
       ps.sphinx
