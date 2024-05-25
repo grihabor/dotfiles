@@ -50,7 +50,7 @@ in {
     pkgs.clang-tools
     pkgs.fd
     pkgs.fzf
-    # pkgs.gcc
+    pkgs.gcc
     pkgs.git
     pkgs.google-java-format
     pkgs.isort
