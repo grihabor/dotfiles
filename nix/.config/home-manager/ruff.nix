@@ -1,58 +1,68 @@
-{ lib
-, rustPlatform
-, fetchFromGitHub
-, installShellFiles
-, stdenv
-, darwin
-, rust-jemalloc-sys
-, ruff-lsp
-}:
-
-rustPlatform.buildRustPackage rec {
-  pname = "ruff";
-  version = "0.4.4";
-
-  src = fetchFromGitHub {
-    owner = "astral-sh";
-    repo = "ruff";
-    rev = "refs/tags/v${version}";
-    hash = "sha256-ViXKGcuDla428mI2Am67gtOxfia5VfR+ry2qyczXO/I=";
+{
+  lib,
+  makeRustPlatform ,
+  fetchFromGitHub,
+  installShellFiles,
+  stdenv,
+  darwin,
+  rust-jemalloc-sys,
+  ruff-lsp,
+  rust-bin,
+}: let
+  rustVersion = "1.77.0";
+  cargo = rust-bin.stable.${rustVersion}.default;
+  rustc = rust-bin.stable.${rustVersion}.default;
+  rustPlatform = makeRustPlatform {
+    inherit cargo rustc;
   };
+in
+  rustPlatform.buildRustPackage rec {
+    pname = "ruff";
+    version = "0.4.4";
 
-  cargoHash = "sha256-VVdIWUQaquVX/8szJ30qPGtG6rFfRadeIvDONd8swro=";
+    src = fetchFromGitHub {
+      owner = "astral-sh";
+      repo = "ruff";
+      rev = "refs/tags/v${version}";
+      hash = "sha256-ViXKGcuDla428mI2Am67gtOxfia5VfR+ry2qyczXO/I=";
+    };
 
-  nativeBuildInputs = [
-    installShellFiles
-  ];
+    cargoHash = "sha256-VVdIWUQaquVX/8szJ30qPGtG6rFfRadeIvDONd8swro=";
 
-  buildInputs = [
-    rust-jemalloc-sys
-  ] ++ lib.optionals stdenv.isDarwin [
-    darwin.apple_sdk.frameworks.CoreServices
-  ];
+    nativeBuildInputs = [
+      installShellFiles
+    ];
 
-  # tests expect no colors
-  preCheck = ''
-    export NO_COLOR=1
-  '';
+    buildInputs =
+      [
+        rust-jemalloc-sys
+      ]
+      ++ lib.optionals stdenv.isDarwin [
+        darwin.apple_sdk.frameworks.CoreServices
+      ];
 
-  postInstall = ''
-    installShellCompletion --cmd ruff \
-      --bash <($out/bin/ruff generate-shell-completion bash) \
-      --fish <($out/bin/ruff generate-shell-completion fish) \
-      --zsh <($out/bin/ruff generate-shell-completion zsh)
-  '';
+    # tests expect no colors
+    preCheck = ''
+      export NO_COLOR=1
+    '';
 
-  passthru.tests = {
-    inherit ruff-lsp;
-  };
+    postInstall = ''
+      installShellCompletion --cmd ruff \
+        --bash <($out/bin/ruff generate-shell-completion bash) \
+        --fish <($out/bin/ruff generate-shell-completion fish) \
+        --zsh <($out/bin/ruff generate-shell-completion zsh)
+    '';
 
-  meta = with lib; {
-    description = "An extremely fast Python linter";
-    homepage = "https://github.com/astral-sh/ruff";
-    changelog = "https://github.com/astral-sh/ruff/releases/tag/v${version}";
-    license = licenses.mit;
-    mainProgram = "ruff";
-    maintainers = with maintainers; [ figsoda ];
-  };
-}
+    passthru.tests = {
+      inherit ruff-lsp;
+    };
+
+    meta = with lib; {
+      description = "An extremely fast Python linter";
+      homepage = "https://github.com/astral-sh/ruff";
+      changelog = "https://github.com/astral-sh/ruff/releases/tag/v${version}";
+      license = licenses.mit;
+      mainProgram = "ruff";
+      maintainers = with maintainers; [figsoda];
+    };
+  }

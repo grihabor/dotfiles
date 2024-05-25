@@ -3,6 +3,7 @@
   pkgs,
   ...
 }: let
+  ruff = pkgs.callPackage ./ruff.nix {};
   python = (
     pkgs.python311.withPackages (ps: let
       debugpy = ps.debugpy.overrideAttrs (self: super: {pytestCheckPhase = ''true'';});
@@ -42,14 +43,17 @@ in {
     # pkgs.hello
 
     python
+    ruff
 
     pkgs.alacritty
     pkgs.alejandra
+    pkgs.clang-tools
     pkgs.fd
     pkgs.fzf
-    pkgs.gcc
+    # pkgs.gcc
     pkgs.git
     pkgs.google-java-format
+    pkgs.isort
     pkgs.jq
     pkgs.kubectl
     pkgs.lua-language-server
@@ -61,7 +65,6 @@ in {
     pkgs.pmd
     pkgs.pre-commit
     pkgs.ripgrep
-    pkgs.ruff
     pkgs.shfmt
     pkgs.sqlfluff
     pkgs.stow

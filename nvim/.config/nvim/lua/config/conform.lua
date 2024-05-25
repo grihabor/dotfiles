@@ -10,6 +10,7 @@ local formatters_by_ft = {
     sql = { "sqlfluff" },
     xml = { "xmlformat" },
     yaml = { "yq" },
+    c = { "clang-format" },
 }
 return {
     "stevearc/conform.nvim",
