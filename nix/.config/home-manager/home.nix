@@ -47,7 +47,6 @@ in {
 
     pkgs.alacritty
     pkgs.alejandra
-    pkgs.audacity
     pkgs.clang-tools
     pkgs.fd
     pkgs.fzf
