@@ -23,7 +23,7 @@ return {
             desc = "Debug the nearest test",
         },
         {
-            "<leader>tn",
+            "<leader>tx",
             function()
                 require("neotest").run.stop()
             end,
