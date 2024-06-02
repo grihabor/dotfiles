@@ -109,15 +109,15 @@ local config = function()
         capabilities = capabilities,
     })
 
-    lspconfig.pyright.setup({
-        on_attach = on_attach,
-        capabilities = capabilities,
-    })
-
-    -- require("config.pyny")({
+    -- lspconfig.pyright.setup({
     --     on_attach = on_attach,
     --     capabilities = capabilities,
     -- })
+
+    require("config.pyny")({
+        on_attach = on_attach,
+        capabilities = capabilities,
+    })
 end
 
 return {
