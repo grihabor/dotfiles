@@ -24,10 +24,15 @@
     system = "x86_64-linux";
     pkgs =
       (
-        nixpkgs
-        .legacyPackages
-        .${system}
-        .extend (rust-overlay.overlays.default)
+        import nixpkgs {
+          inherit system;
+          config = {
+            permittedInsecurePackages = [
+              "electron-25.9.0"
+            ];
+          };
+          overlays = [rust-overlay.overlays.default];
+        }
       )
       .extend (import ./overlays/python.nix);
     pants-bin = pants-nix;
