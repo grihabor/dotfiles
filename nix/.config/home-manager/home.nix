@@ -74,7 +74,6 @@ in {
     pkgs.vscode-extensions.vadimcn.vscode-lldb
     pkgs.xmlformat
     pkgs.yaml-language-server
-    pkgs.youtube-music
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
