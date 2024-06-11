@@ -48,11 +48,14 @@ in {
     pkgs.alacritty
     pkgs.alejandra
     pkgs.clang-tools
+    pkgs.comby
     pkgs.fd
     pkgs.fzf
     pkgs.gcc
     pkgs.git
+    pkgs.go
     pkgs.google-java-format
+    pkgs.haskell.compiler.ghc98
     pkgs.isort
     pkgs.jq
     pkgs.kubectl
