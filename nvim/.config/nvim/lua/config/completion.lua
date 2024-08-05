@@ -81,6 +81,13 @@ return {
                     }),
                     { "i", "c" }
                 ),
+                ["<C-Y>"] = cmp.mapping(
+                    cmp.mapping.confirm({
+                        behavior = cmp.ConfirmBehavior.Replace,
+                        select = true,
+                    }),
+                    { "i", "c" }
+                ),
             },
             sources = sources,
             window = {
