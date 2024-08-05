@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-import shlex
 import argparse
 import logging
 import random
+import shlex
+import shutil
 import string
 import subprocess as sp
 
@@ -29,16 +30,16 @@ def main():
 
     args = parser.parse_args()
 
-    base = git_merge_base(args.onto, args.branch)
-    apply_commits = git_log(start=base, stop=args.branch)
+    merge_base = git_merge_base(args.onto, args.branch)
+    apply_commits = git_log(start=merge_base, stop=args.branch)
 
     replay_branch = "replay-" + "".join(random.choices(string.hexdigits, k=4))
-    sp.check_call(["git", "checkout", "-b", replay_branch, base])
+    sp.check_call(["git", "checkout", "-b", replay_branch, args.onto])
 
-    for i, commit in apply_commits:
-        args = shlex.split(commit.message)
-        executable_exists = shutil.which(args[0]) is not None
-        logger.debug("does executable %s exist? %s", args[0], executable_exists)
+    for commit in apply_commits:
+        command_args = shlex.split(commit.message)
+        executable_exists = shutil.which(command_args[0]) is not None
+        logger.debug("does executable %s exist? %s", command_args[0], executable_exists)
 
         if not executable_exists:
             cherry_pick = ["git", "cherry-pick", commit.hash]
