@@ -3,7 +3,6 @@
   pkgs,
   ...
 }: let
-  ruff = pkgs.callPackage ./ruff.nix {};
   python = (
     pkgs.python311.withPackages (ps: let
       debugpy = ps.debugpy.overrideAttrs (self: super: {pytestCheckPhase = ''true'';});
@@ -43,7 +42,6 @@ in {
     # pkgs.hello
 
     python
-    ruff
 
     pkgs.alacritty
     pkgs.alejandra
@@ -64,10 +62,14 @@ in {
     pkgs.neovim
     pkgs.neovim-remote
     pkgs.nil
+    pkgs.nodePackages.prettier
     pkgs.nodePackages.pyright
+    pkgs.nodePackages.typescript-language-server
     pkgs.pmd
     pkgs.pre-commit
     pkgs.ripgrep
+    pkgs.rubyPackages.htmlbeautifier
+    pkgs.ruff
     pkgs.shfmt
     pkgs.sqlfluff
     pkgs.stow

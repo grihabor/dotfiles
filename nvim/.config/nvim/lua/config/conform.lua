@@ -1,6 +1,10 @@
 dict = require("dict")
 local formatters_by_ft = {
+    c = { "clang-format" },
+    html = { "htmlbeautifier" },
     java = { "google-java-format" },
+    javascript = { "prettier" },
+    javascriptreact = { "prettier" },
     json = { "jq" },
     lua = { "stylua" },
     nix = { "alejandra" },
@@ -8,9 +12,10 @@ local formatters_by_ft = {
     rust = {},
     sh = { "shfmt" },
     sql = { "sqlfluff" },
+    typescript = { "prettier" },
+    typescriptreact = { "prettier" },
     xml = { "xmlformat" },
     yaml = { "yq" },
-    c = { "clang-format" },
 }
 return {
     "stevearc/conform.nvim",
