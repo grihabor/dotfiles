@@ -45,6 +45,7 @@ in {
 
     pkgs.alacritty
     pkgs.alejandra
+    pkgs.ausweisapp
     pkgs.clang-tools
     pkgs.comby
     pkgs.fd
