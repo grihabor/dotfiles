@@ -57,6 +57,7 @@ in {
     pkgs.haskell.compiler.ghc98
     pkgs.isort
     pkgs.jq
+    pkgs.just
     pkgs.kubectl
     pkgs.lua-language-server
     pkgs.meld
