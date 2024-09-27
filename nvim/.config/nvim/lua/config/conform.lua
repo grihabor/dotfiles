@@ -1,6 +1,7 @@
 dict = require("dict")
 local formatters_by_ft = {
     c = { "clang-format" },
+    cue = { "cue_fmt" },
     html = { "htmlbeautifier" },
     java = { "google-java-format" },
     javascript = { "prettier" },
