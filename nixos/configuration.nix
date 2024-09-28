@@ -85,6 +85,7 @@
     description = "Gregory";
     extraGroups = ["networkmanager" "wheel"];
     packages = with pkgs; [
+      blender
       firefox
       home-manager
       stow
@@ -102,10 +103,9 @@
     curl
     gcc
     git
-    neovim
   ];
 
-  environment.variables.EDITOR = "nvim";
+  environment.variables.EDITOR = "vim";
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
