@@ -1,3 +1,0 @@
-#!/bin/bash
-
-. $HOME/.local/share/complete-alias/complete_alias

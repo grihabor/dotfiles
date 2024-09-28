@@ -19,6 +19,7 @@
       ropevim
     ])
   );
+  complete-alias = pkgs.callPackage ./complete_alias.nix {};
 in {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
@@ -80,6 +81,7 @@ in {
     pkgs.tmux
     pkgs.tree-sitter
     pkgs.vscode-extensions.vadimcn.vscode-lldb
+    pkgs.xclip
     pkgs.xmlformat
     pkgs.yaml-language-server
     pkgs.yamllint
@@ -111,6 +113,10 @@ in {
     #   org.gradle.console=verbose
     #   org.gradle.daemon.idletimeout=3600000
     # '';
+
+    ".bash_completion".text = ''
+      . ${complete-alias}/complete_alias
+    '';
   };
 
   # Home Manager can also manage your environment variables through
