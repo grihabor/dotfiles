@@ -20,9 +20,10 @@ fi
 PROJECT_ROOT=$($FD --hidden --regex "^.git$" \
     --exclude .cargo \
     --exclude .local \
-    --type d \
+    --exclude .cache \
+    --exclude .tmux \
     --min-depth 2 \
-    --max-depth 3 \
+    --max-depth 4 \
     "$HOME" |
     xargs dirname |
     fzf)
