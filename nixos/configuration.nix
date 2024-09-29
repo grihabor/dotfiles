@@ -10,6 +10,7 @@
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./pulse-secure.nix
+    ./nvidia.nix
   ];
 
   # Bootloader.
