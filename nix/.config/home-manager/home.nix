@@ -144,14 +144,24 @@ in {
       nix-direnv.enable = true;
     };
 
+    firefox = {
+      enable = true;
+      profiles = {
+        default = {
+          id = 0;
+          name = "Personal";
+        };
+        pulsepoint = {
+          id = 1;
+          name = "PulsePoint";
+        };
+      };
+    };
+
     bash = {
       enable = true;
       profileExtra = ''
         . ~/.profile.old
-
-        # export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${pkgs.lib.makeLibraryPath [
-          pkgs.stdenv.cc.cc
-        ]}
       '';
       bashrcExtra = ''
         . ~/.bashrc.old

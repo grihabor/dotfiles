@@ -88,7 +88,9 @@
       blender
       firefox
       home-manager
-      stow
+      prusa-slicer
+      slack
+      spotify
     ];
   };
 
@@ -103,6 +105,7 @@
     curl
     gcc
     git
+    stow
   ];
 
   environment.variables.EDITOR = "vim";
