@@ -82,16 +82,6 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.grihabor = {
     isNormalUser = true;
-    description = "Gregory";
-    extraGroups = ["networkmanager" "wheel"];
-    packages = with pkgs; [
-      blender
-      firefox
-      home-manager
-      prusa-slicer
-      slack
-      spotify
-    ];
   };
 
   # Allow unfree packages
