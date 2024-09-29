@@ -76,6 +76,7 @@ in {
     pkgs.ruff
     pkgs.shfmt
     pkgs.sqlfluff
+    pkgs.steam
     pkgs.stow
     pkgs.stylua
     pkgs.telegram-desktop
@@ -132,7 +133,7 @@ in {
   #  /etc/profiles/per-user/grihabor/etc/profile.d/hm-session-vars.sh
   #
   home.sessionVariables = {
-    # EDITOR = "emacs";
+    EDITOR = "nvim";
   };
 
   programs = {
@@ -170,5 +171,12 @@ in {
     };
 
     pyenv.enable = true;
+  };
+
+  nixpkgs = {
+    config = {
+      allowUnfree = true;
+      allowUnfreePredicate = _: true;
+    };
   };
 }
