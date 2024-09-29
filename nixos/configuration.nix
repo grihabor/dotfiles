@@ -107,6 +107,7 @@
     gcc
     git
     stow
+    vim
   ];
 
   environment.variables.EDITOR = "vim";
