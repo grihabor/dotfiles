@@ -118,6 +118,7 @@ in {
     ".bash_completion".text = ''
       . ${complete-alias}/complete_alias
     '';
+
   };
 
   # Home Manager can also manage your environment variables through

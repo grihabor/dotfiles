@@ -40,6 +40,7 @@
       modules = [
         # {home.packages = [pants-bin.packages.${system}."release_2.20.0"];}
         ./home.nix
+        ./home-tpm.nix
       ];
 
       # Optionally use extraSpecialArgs
