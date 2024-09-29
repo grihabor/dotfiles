@@ -78,6 +78,7 @@ in {
     pkgs.sqlfluff
     pkgs.stow
     pkgs.stylua
+    pkgs.telegram-desktop
     pkgs.tmux
     pkgs.tree-sitter
     pkgs.vscode-extensions.vadimcn.vscode-lldb
