@@ -76,7 +76,6 @@ in {
     pkgs.ruff
     pkgs.shfmt
     pkgs.sqlfluff
-    pkgs.steam
     pkgs.stow
     pkgs.stylua
     pkgs.telegram-desktop
