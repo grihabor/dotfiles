@@ -3,8 +3,8 @@
   pkgs,
   ...
 }: let
-  python = (
-    pkgs.python311.withPackages (ps: let
+  python3 = (
+    pkgs.python3.withPackages (ps: let
       debugpy = ps.debugpy.overrideAttrs (self: super: {pytestCheckPhase = ''true'';});
       ropemode = ps.callPackage ./ropemode.nix {};
       ropevim = ps.callPackage ./ropevim.nix {ropemode = ropemode;};
@@ -42,7 +42,7 @@ in {
     # # "Hello, world!" when run.
     # pkgs.hello
 
-    python
+    python3
 
     pkgs.alejandra
     pkgs.ausweisapp
