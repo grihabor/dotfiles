@@ -106,5 +106,7 @@ done
 # shellcheck source=/dev/null
 source <(kubectl completion bash)
 
-alias fd="fdfind"
+if command -v fdfind; then
+    alias fd="fdfind"
+fi
 alias jq="yq -p json -o json"
