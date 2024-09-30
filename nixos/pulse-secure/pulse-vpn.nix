@@ -49,14 +49,9 @@
       license = licenses.gpl3;
     };
   };
-  start-pulse-vpn = pkgs.writeShellScriptBin "start-pulse-vpn" ''
+in
+  pkgs.writeShellScriptBin "start-pulse-vpn" ''
     HOST=https://vpn.pulsepoint.com/saml
     DSID=$(${pulse-cookie}/bin/get-pulse-cookie -n DSID $HOST)
     sudo ${pkgs.openconnect}/bin/openconnect --protocol nc -C DSID=$DSID $HOST
-  '';
-in {
-  environment.systemPackages = with pkgs; [
-    openconnect
-    start-pulse-vpn
-  ];
-}
+  ''
