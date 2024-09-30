@@ -26,10 +26,7 @@ def main():
         level=logging.DEBUG,
         format='{"ts":"%(asctime)s","lvl":"%(levelname)s","msg":"%(message)s"}',
     )
-    user_firefox = "/etc/profiles/per-user/grihabor/bin/firefox"
-    if not os.path.exists(user_firefox):
-        user_firefox = "/usr/bin/firefox"
-
+    user_firefox = "firefox"
     args = get_args(user_firefox)
     logger.info("old args: %s", sys.argv)
     logger.info("new args: %s", args)
@@ -57,10 +54,10 @@ def get_args(firefox: str) -> list[str]:
                 or "onenr" in url.hostname
             )
         ):
-            return [firefox, "-P", "pulsepoint"] + args
+            return [firefox, "-P", "PulsePoint"] + args
 
         else:
-            return [firefox, "-P", "personal"] + args
+            return [firefox, "-P", "Personal"] + args
 
     return [firefox] + args
 
