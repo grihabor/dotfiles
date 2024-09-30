@@ -20,7 +20,6 @@
     ])
   );
   complete-alias = pkgs.callPackage ./complete_alias.nix {};
-  start-pulse-vpn = pkgs.callPackage ../../../nixos/pulse-secure/pulse-vpn.nix {};
 in {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
@@ -44,7 +43,6 @@ in {
     # pkgs.hello
 
     python
-    start-pulse-vpn
 
     pkgs.alejandra
     pkgs.ausweisapp
@@ -119,6 +117,7 @@ in {
     ".bash_completion".text = ''
       . ${complete-alias}/complete_alias
     '';
+
   };
 
   # Home Manager can also manage your environment variables through
