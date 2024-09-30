@@ -2,6 +2,6 @@
 Version=1.0
 Type=Application
 Terminal=false
-Exec=firefox -P personal
+Exec=firefox -P Personal
 Name=fpersonal
 Icon=firefox

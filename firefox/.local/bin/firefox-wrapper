@@ -17,6 +17,9 @@ def parse_url(url):
 
 
 def main():
+    # Install:
+    #   sudo update-alternatives --install /usr/bin/x-www-browser x-www-browser /home/grihabor/.local/bin/firefox-wrapper 100
+    #   sudo update-alternatives --install /usr/bin/gnome-www-browser gnome-www-browser /home/grihabor/.local/bin/firefox-wrapper 100
     logging.basicConfig(
         filename=Path(os.environ["HOME"]) / ".local" / "firefox.log",
         filemode="a",
