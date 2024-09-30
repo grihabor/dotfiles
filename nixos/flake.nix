@@ -10,13 +10,13 @@
     nix-alien,
     ...
   } @ inputs: {
-    nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.nixos = nixpkgs.lib.nixosSystem rec {
       system = "x86_64-linux";
       modules = [
         ./configuration.nix
-        ({system, ...}: {
-          environment.systemPackages = with nix-alien.packages.${system}; [
-            nix-alien
+        ({...}: {
+          environment.systemPackages = [
+            nix-alien.packages.${system}.nix-alien
           ];
           # Optional, needed for `nix-alien-ld`
           programs.nix-ld.enable = true;
