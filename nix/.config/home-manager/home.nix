@@ -44,6 +44,7 @@ in {
 
     python3
 
+    pkgs.alacritty
     pkgs.alejandra
     pkgs.ausweisapp
     pkgs.clang-tools

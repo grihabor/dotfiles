@@ -27,6 +27,8 @@
   # Enable networking
   networking.networkmanager.enable = true;
 
+  virtualisation.docker.enable = true;
+
   # Set your time zone.
   time.timeZone = "Europe/Berlin";
 
@@ -85,7 +87,7 @@
   users.users.grihabor = {
     isNormalUser = true;
     description = "Gregory";
-    extraGroups = ["networkmanager" "wheel"];
+    extraGroups = ["networkmanager" "wheel" "docker"];
     packages = with pkgs; [
       blender
       firefox
