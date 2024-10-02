@@ -64,16 +64,30 @@ def main() -> None:
     args = parser.parse_args()
     endpoint = f"https://{args.host}/saml"
 
-    cookie_path = Path(os.environ["HOME"]) / ".pulse-cookie" / args.host / args.name
-    if cookie_path.exists():
-        cookie = cookie_path.read_text()
-    else:
-        cookie = extract_cookie(url=endpoint, cookie_name=args.name)
-        cookie_path.parent.mkdir(parents=True)
-        cookie_path.write_text(cookie)
+    force_new_cookie = False
+    while True:
+        cookie_path = Path(os.environ["HOME"]) / ".pulse-cookie" / args.host / args.name
+        if cookie_path.exists() and not force_new_cookie:
+            cookie = cookie_path.read_text()
+        else:
+            cookie = extract_cookie(url=endpoint, cookie_name=args.name)
+            cookie_path.parent.mkdir(parents=True, exist_ok=True)
+            cookie_path.write_text(cookie)
 
-    command = f"sudo openconnect --protocol nc -C DSID={cookie} {endpoint}"
-    subprocess.check_call(shlex.split(command))
+        command = f"sudo openconnect --protocol nc -C DSID={cookie} {endpoint}"
+        try:
+            subprocess.run(
+                shlex.split(command),
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+        except subprocess.CalledProcessError as e:
+            sys.stderr.buffer.write(e.stderr)
+            if b"Cookie was rejected by server" in e.stderr:
+                force_new_cookie = True
+                continue
+            raise
 
 
 if __name__ == "__main__":
