@@ -44,7 +44,6 @@ in {
 
     python3
 
-    pkgs.alacritty
     pkgs.alejandra
     pkgs.ausweisapp
     pkgs.clang-tools
@@ -78,7 +77,6 @@ in {
     pkgs.sqlfluff
     pkgs.stow
     pkgs.stylua
-    pkgs.telegram-desktop
     pkgs.tmux
     pkgs.tree-sitter
     pkgs.vscode-extensions.vadimcn.vscode-lldb

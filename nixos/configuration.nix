@@ -90,13 +90,15 @@
     description = "Gregory";
     extraGroups = ["networkmanager" "wheel" "docker"];
     packages = with pkgs; [
+      alacritty
       blender
+      discord
       firefox
       home-manager
       prusa-slicer
       slack
       spotify
-      discord
+      telegram-desktop
     ];
   };
 
