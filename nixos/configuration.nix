@@ -56,7 +56,7 @@
 
   # Configure keymap in X11
   services.xserver = {
-    xkb.layout = "us";
+    xkb.layout = "us,ru";
     xkb.variant = "";
   };
 
@@ -95,6 +95,7 @@
       prusa-slicer
       slack
       spotify
+      discord
     ];
   };
 
