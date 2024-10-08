@@ -11,7 +11,7 @@
     ./hardware-configuration.nix
     ./pulse-secure.nix
     ./nvidia.nix
-    ./wine.nix
+    ./steam.nix
   ];
 
   # Bootloader.
