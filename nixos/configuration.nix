@@ -91,6 +91,7 @@
     packages = with pkgs; [
       alacritty
       blender
+      dbeaver-bin
       discord
       firefox
       home-manager
