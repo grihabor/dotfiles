@@ -57,6 +57,7 @@ in {
     pkgs.google-java-format
     pkgs.haskell.compiler.ghc98
     pkgs.isort
+    pkgs.jdt-language-server
     pkgs.jq
     pkgs.just
     pkgs.kubectl
