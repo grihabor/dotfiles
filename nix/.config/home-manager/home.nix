@@ -48,6 +48,7 @@ in {
     pkgs.ausweisapp
     pkgs.clang-tools
     pkgs.comby
+    pkgs.coursier
     pkgs.fd
     pkgs.fzf
     pkgs.git
