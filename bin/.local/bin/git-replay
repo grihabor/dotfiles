@@ -7,7 +7,6 @@ import argparse
 import logging
 import random
 import shlex
-import shutil
 import string
 import subprocess as sp
 
@@ -21,7 +20,7 @@ class Commit:
 
 
 def main():
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-o", "--onto", required=True)
@@ -37,18 +36,16 @@ def main():
     sp.check_call(["git", "checkout", "-b", replay_branch, args.onto])
 
     for commit in apply_commits:
-        command_args = shlex.split(commit.message)
-        executable_exists = shutil.which(command_args[0]) is not None
-        logger.debug("does executable %s exist? %s", command_args[0], executable_exists)
-
-        if not executable_exists:
+        command = [args.shell, "-c", commit.message]
+        logger.info("running: %s", shlex.join(command))
+        try:
+            sp.check_call(command)
+        except sp.CalledProcessError:
             cherry_pick = ["git", "cherry-pick", commit.hash]
             logger.info("running: %s", shlex.join(cherry_pick))
             sp.check_call(cherry_pick)
             continue
 
-        logger.info("running: %s", commit.message)
-        sp.check_call([args.shell, "-c", commit.message])
         sp.check_call(["git", "add", "."])
         sp.check_call(["git", "commit", "--allow-empty", "-m", commit.message])
 
