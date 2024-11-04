@@ -68,10 +68,10 @@ in {
     pkgs.neovim-remote
     pkgs.nil
     pkgs.nodePackages.prettier
-    pkgs.nodePackages.pyright
     pkgs.nodePackages.typescript-language-server
     pkgs.pmd
     pkgs.pre-commit
+    pkgs.pyright
     pkgs.ripgrep
     pkgs.rubyPackages.htmlbeautifier
     pkgs.ruff
