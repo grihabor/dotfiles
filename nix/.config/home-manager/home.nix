@@ -64,7 +64,7 @@ in {
     pkgs.kubectl
     pkgs.lua-language-server
     pkgs.meld
-    pkgs.neovim
+    pkgs.neovim-unwrapped
     pkgs.neovim-remote
     pkgs.nil
     pkgs.nodePackages.prettier
