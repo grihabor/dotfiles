@@ -55,10 +55,10 @@ def get_args(firefox: str) -> list[str]:
                 or "onenr" in url.hostname
             )
         ):
-            return [firefox, "-P", "PulsePoint"] + args
+            return [firefox, "-P", "pulsepoint"] + args
 
         else:
-            return [firefox, "-P", "Personal"] + args
+            return [firefox, "-P", "personal"] + args
 
     return [firefox] + args
 

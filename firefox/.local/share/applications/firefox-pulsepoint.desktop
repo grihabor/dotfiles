@@ -2,6 +2,6 @@
 Version=1.0
 Type=Application
 Terminal=false
-Exec=firefox -P PulsePoint
+Exec=firefox -P pulsepoint
 Name=fpulsepoint
 Icon=firefox
