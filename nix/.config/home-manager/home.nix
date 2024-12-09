@@ -151,11 +151,11 @@ in {
       profiles = {
         default = {
           id = 0;
-          name = "Personal";
+          name = "personal";
         };
         pulsepoint = {
           id = 1;
-          name = "PulsePoint";
+          name = "pulsepoint";
         };
       };
     };
