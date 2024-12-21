@@ -166,11 +166,14 @@ in {
         . ~/.profile.old
       '';
       bashrcExtra = ''
-        . ~/.bashrc.old
+        for path in "$HOME"/.bashrc.d/*.sh; do
+            . "$path"
+        done
       '';
     };
 
     pyenv.enable = true;
+    dircolors.enable = true;
   };
 
   nixpkgs = {
