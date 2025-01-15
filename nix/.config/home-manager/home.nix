@@ -61,16 +61,18 @@ in {
     pkgs.jdt-language-server
     pkgs.jq
     pkgs.just
+    pkgs.krew
     pkgs.kubectl
     pkgs.lua-language-server
     pkgs.meld
-    pkgs.neovim-unwrapped
     pkgs.neovim-remote
+    pkgs.neovim-unwrapped
     pkgs.nil
     pkgs.nodePackages.prettier
     pkgs.nodePackages.typescript-language-server
     pkgs.pmd
     pkgs.pre-commit
+    pkgs.protobuf
     pkgs.pyright
     pkgs.ripgrep
     pkgs.rubyPackages.htmlbeautifier
@@ -166,6 +168,8 @@ in {
         . ~/.profile.old
       '';
       bashrcExtra = ''
+        export PATH="''\${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+
         for path in "$HOME"/.bashrc.d/*.sh; do
             . "$path"
         done
