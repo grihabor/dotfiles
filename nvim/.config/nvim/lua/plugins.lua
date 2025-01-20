@@ -28,6 +28,10 @@ return require("lazy").setup({
         },
         -- Optional dependencies
         dependencies = { "nvim-tree/nvim-web-devicons" },
+        config = function(opts)
+            require("oil").setup(opts)
+            vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+        end,
     },
     -- git
     "tpope/vim-fugitive",
