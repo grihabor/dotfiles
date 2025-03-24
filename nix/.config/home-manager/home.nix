@@ -165,7 +165,13 @@ in {
     bash = {
       enable = true;
       profileExtra = ''
-        . ~/.profile.old
+        if [ -d "$HOME/.local/bin" ] ; then
+            PATH="$HOME/.local/bin:$PATH"
+        fi
+
+        for path in $HOME/.profile.d/*.sh; do
+            . "$path"
+        done
       '';
       bashrcExtra = ''
         export PATH="''\${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
