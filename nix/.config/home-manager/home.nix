@@ -56,6 +56,7 @@ in {
     pkgs.go
     pkgs.google-cloud-sdk
     pkgs.google-java-format
+    pkgs.gopls
     pkgs.haskell.compiler.ghc98
     pkgs.isort
     pkgs.jdt-language-server

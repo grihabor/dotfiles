@@ -114,6 +114,11 @@ local config = function()
         capabilities = capabilities,
     })
 
+    lspconfig.gopls.setup({
+        on_attach = on_attach,
+        capabilities = capabilities,
+    })
+
     -- require("config.pyny")({
     --     on_attach = on_attach,
     --     capabilities = capabilities,
