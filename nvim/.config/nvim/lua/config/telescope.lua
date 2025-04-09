@@ -72,6 +72,13 @@ return {
                     -- `hidden = true` will still show the inside of `.git/` as it's not `.gitignore`d.
                     find_command = { "rg", "--files", "--hidden", "--glob", "!**/.git/*" },
                 },
+                help_tags = {
+                    mappings = {
+                        i = {
+                            ["<CR>"] = "file_vsplit",
+                        },
+                    },
+                },
             },
         })
 
