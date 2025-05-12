@@ -78,6 +78,7 @@ return require("lazy").setup({
 
     -- language parsers
     require("config.treesitter"),
+    "nvim-treesitter/nvim-treesitter-textobjects",
 
     -- scala
     require("config.metals"),
