@@ -42,7 +42,7 @@ in {
     # # "Hello, world!" when run.
     # pkgs.hello
 
-    python3
+    (pkgs.writeShellScriptBin "python-nix" "exec -a $0 ${python3}/bin/python3 \"$@\"")
 
     pkgs.alejandra
     pkgs.ausweisapp
