@@ -66,8 +66,6 @@ in {
     pkgs.kubectl
     pkgs.lua-language-server
     pkgs.meld
-    pkgs.neovim-remote
-    pkgs.neovim-unwrapped
     pkgs.nil
     pkgs.nodePackages.prettier
     pkgs.nodePackages.typescript-language-server
@@ -183,7 +181,6 @@ in {
       '';
     };
 
-    pyenv.enable = true;
     dircolors.enable = true;
   };
 
