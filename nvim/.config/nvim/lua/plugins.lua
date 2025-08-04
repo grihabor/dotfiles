@@ -13,7 +13,6 @@ return require("lazy").setup({
     "tpope/vim-repeat",
     "tpope/vim-surround",
     "tpope/vim-abolish",
-    "tpope/vim-unimpaired",
     -- align text in columns
     "godlygeek/tabular",
     -- open files from nvim terminal without nested sessions
