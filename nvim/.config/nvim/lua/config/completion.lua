@@ -25,11 +25,6 @@ local plugins = {
         dependency = "hrsh7th/cmp-path",
         source = { name = "path" },
     },
-    {
-        -- ultisnips integration
-        dependency = "quangnguyen30192/cmp-nvim-ultisnips",
-        source = { name = "ultisnips", keyword_length = 2 },
-    },
 }
 
 local dependencies = array.map(plugins, function(p)

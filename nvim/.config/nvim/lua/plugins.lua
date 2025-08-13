@@ -75,8 +75,6 @@ return require("lazy").setup({
     "hrsh7th/cmp-nvim-lua",
     "hrsh7th/cmp-nvim-lsp-signature-help",
     "hrsh7th/cmp-cmdline",
-    { "quangnguyen30192/cmp-nvim-ultisnips", dependencies = { "SirVer/ultisnips" } },
-    "SirVer/ultisnips",
 
     -- language parsers
     require("config.treesitter"),
