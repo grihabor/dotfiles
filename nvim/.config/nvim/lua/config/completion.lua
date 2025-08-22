@@ -56,12 +56,6 @@ return {
     config = function()
         local cmp = require("cmp")
         cmp.setup({
-            -- Enable LSP snippets
-            snippet = {
-                expand = function(args)
-                    vim.fn["UltiSnips#Anon"](args.body)
-                end,
-            },
             mapping = {
                 ["<C-p>"] = cmp.mapping.select_prev_item(),
                 ["<C-n>"] = cmp.mapping.select_next_item(),
