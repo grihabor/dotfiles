@@ -158,6 +158,10 @@ in {
           id = 1;
           name = "pulsepoint";
         };
+        other = {
+          id = 2;
+          name = "other";
+        };
       };
     };
 

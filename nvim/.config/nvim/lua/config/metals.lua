@@ -4,6 +4,7 @@ return {
     ft = { "scala", "sbt", "java" },
     opts = function()
         local metals_config = require("metals").bare_config()
+        metals_config.init_options.statusBarProvider = "off"
 
         -- *READ THIS*
         -- I *highly* recommend setting statusBarProvider to true, however if you do,
@@ -15,49 +16,7 @@ return {
         -- Example if you are using cmp how to make sure the correct capabilities for snippets are set
         metals_config.capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-        metals_config.on_attach = function(client, bufnr)
-            require("metals").setup_dap()
-
-            -- LSP mappings
-            map("n", "gd", vim.lsp.buf.definition)
-            map("n", "K", vim.lsp.buf.hover)
-            map("n", "gi", vim.lsp.buf.implementation)
-            map("n", "gr", vim.lsp.buf.references)
-            map("n", "gds", vim.lsp.buf.document_symbol)
-            map("n", "gws", vim.lsp.buf.workspace_symbol)
-            map("n", "<space>cl", vim.lsp.codelens.run)
-            map("n", "<space>sh", vim.lsp.buf.signature_help)
-            map("n", "<space>rn", vim.lsp.buf.rename)
-            map("n", "<space>ca", vim.lsp.buf.code_action)
-
-            map("n", "<leader>ws", function()
-                require("metals").hover_worksheet()
-            end)
-
-            -- all workspace diagnostics
-            map("n", "<leader>aa", vim.diagnostic.setqflist)
-
-            -- all workspace errors
-            map("n", "<leader>ae", function()
-                vim.diagnostic.setqflist({ severity = "E" })
-            end)
-
-            -- all workspace warnings
-            map("n", "<leader>aw", function()
-                vim.diagnostic.setqflist({ severity = "W" })
-            end)
-
-            -- buffer diagnostics only
-            map("n", "<leader>d", vim.diagnostic.setloclist)
-
-            map("n", "[c", function()
-                vim.diagnostic.goto_prev({ wrap = false })
-            end)
-
-            map("n", "]c", function()
-                vim.diagnostic.goto_next({ wrap = false })
-            end)
-        end
+        metals_config.on_attach = require("config.lsp").on_attach
         return metals_config
     end,
     config = function(self, metals_config)

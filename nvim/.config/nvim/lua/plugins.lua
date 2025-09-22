@@ -166,4 +166,13 @@ return require("lazy").setup({
             require("kitty-scrollback").setup()
         end,
     },
+    {
+        "gruvw/strudel.nvim",
+        build = "npm install",
+        config = function()
+            require("strudel").setup({
+                browser_exec_path = "/usr/bin/google-chrome",
+            })
+        end,
+    },
 })
