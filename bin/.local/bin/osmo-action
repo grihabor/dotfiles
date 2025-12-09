@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+root=$1
+if [ -z "$root" ]; then
+    echo "Usage: $0 DIR" >&2
+    exit 1
+fi
+
+name=$(basename "$(realpath "$root")")
+find "$root" -type f -name "*.MP4" | while read -r path; do
+    echo "$path"
+    mkdir -p "/tmp/$name"
+    filename=$(basename "$path")
+    out="/tmp/$name/$filename"
+    if [ ! -f "$out" ]; then
+        ffmpeg -nostdin -i "$path" -pix_fmt yuv420p -crf 18 -vf scale=1920:-2,setsar=1:1 "$out"
+    fi
+done
