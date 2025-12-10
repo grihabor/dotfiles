@@ -87,7 +87,7 @@ in {
     pkgs.xmlformat
     pkgs.yaml-language-server
     pkgs.yamllint
-    pkgs.yq-go
+    # pkgs.yq-go -- install via bin instead
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
