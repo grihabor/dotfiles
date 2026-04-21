@@ -52,17 +52,18 @@ local config = function()
 
     local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-    local lspconfig = require("lspconfig")
-
-    -- lspconfig.pylyzer.setup{
+    -- vim.lsp.config('pylyzer',{
     --     on_attach=on_attach,
     --     capabilities=capabilities,
     -- }
-    lspconfig.ts_ls.setup({
+
+    vim.lsp.config("ts_ls", {
         on_attach = on_attach,
         capabilities = capabilities,
     })
-    -- lspconfig.pylsp.setup{
+    vim.lsp.enable("ts_ls")
+
+    -- vim.lsp.config('pylsp',{
     --     on_attach=on_attach,
     --     capabilities=capabilities,
     --   settings = {
@@ -77,35 +78,41 @@ local config = function()
     --     }
     --   }
     -- }
-    -- lspconfig.rust_analyzer.setup({
+    -- vim.lsp.config('rust_analyzer',{
     --     on_attach = on_attach,
     --     capabilities = capabilities,
     -- })
 
-    lspconfig.lua_ls.setup({
+    vim.lsp.config("lua_ls", {
         on_attach = on_attach,
         capabilities = capabilities,
     })
+    vim.lsp.enable("lua_ls")
 
-    lspconfig.jdtls.setup({
+    vim.lsp.config("jdtls", {
         on_attach = on_attach,
         capabilities = capabilities,
     })
+    vim.lsp.enable("jdtls")
 
-    lspconfig.yamlls.setup({
+    vim.lsp.config("yamlls", {
         on_attach = on_attach,
         capabilities = capabilities,
     })
+    vim.lsp.enable("yamlls")
 
-    lspconfig.nil_ls.setup({
+    vim.lsp.config("nil_ls", {
         on_attach = on_attach,
         capabilities = capabilities,
     })
+    vim.lsp.enable("nil_ls")
 
-    lspconfig.pyright.setup({
+    vim.lsp.config("ty", {
         on_attach = on_attach,
         capabilities = capabilities,
     })
+    vim.lsp.enable("ty")
+
     -- vim.lsp.config("pyrefly", {
     --     -- example of how to run `uv` installed Pyrefly without adding to your path
     --     cmd = { "uvx", "pyrefly", "lsp" },
@@ -114,10 +121,11 @@ local config = function()
     --     capabilities = capabilities,
     -- })
 
-    lspconfig.gopls.setup({
+    vim.lsp.config("gopls", {
         on_attach = on_attach,
         capabilities = capabilities,
     })
+    vim.lsp.enable("gopls")
 
     -- require("config.pyny")({
     --     on_attach = on_attach,
