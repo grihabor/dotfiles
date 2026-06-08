@@ -8,6 +8,10 @@ local ts_select_dir_for_grep = function(prompt_bufnr)
     fb.file_browser({
         files = false,
         depth = false,
+        hidden = {
+            file_browser = true,
+            folder_browser = true,
+        },
         attach_mappings = function(prompt_bufnr)
             require("telescope.actions").select_default:replace(function()
                 local entry_path = action_state.get_selected_entry().Path
