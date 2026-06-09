@@ -15,7 +15,6 @@ in {
     set -g @plugin 'sainnhe/tmux-fzf'
 
     bind-key x kill-pane # skip "kill-pane 1? (y/n)" prompt
-    set -g detach-on-destroy off  # don't exit from tmux when closing a session
 
     # available plugins: battery, cpu-usage, git, gpu-usage, ram-usage, network, network-bandwidth, network-ping, attached-clients, network-vpn, weather, time, spotify-tui, kubernetes-context
     set -g @dracula-plugins "cpu-usage ram-usage"
