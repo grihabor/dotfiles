@@ -1,0 +1,36 @@
+#!/bin/bash
+
+set -euo pipefail
+
+if git config --get remote.upstream.url >/dev/null 2>&1; then
+    DEFAULT_REMOTE=upstream
+elif git config --get remote.origin.url >/dev/null 2>&1; then
+    DEFAULT_REMOTE=origin
+else
+    printf 'No upstream or origin remote found\n' >&2
+    exit 1
+fi
+
+DEFAULT_BRANCH=$(
+    git symbolic-ref --quiet --short "refs/remotes/$DEFAULT_REMOTE/HEAD" 2>/dev/null \
+    | sed "s#^$DEFAULT_REMOTE/##"
+)
+
+if [ -z "$DEFAULT_BRANCH" ]; then
+    DEFAULT_BRANCH=$(git remote show "$DEFAULT_REMOTE" | sed -n '/HEAD branch/s/.*: //p')
+fi
+
+if [ -z "$DEFAULT_BRANCH" ]; then
+    printf 'Could not determine default branch for %s\n' "$DEFAULT_REMOTE" >&2
+    exit 1
+fi
+
+BASE_REF="refs/remotes/$DEFAULT_REMOTE/$DEFAULT_BRANCH"
+
+if ! git rev-parse --verify "$BASE_REF" >/dev/null 2>&1; then
+    printf 'Missing local ref %s; fetch %s first\n' "$BASE_REF" "$DEFAULT_REMOTE" >&2
+    exit 1
+fi
+
+MERGE_BASE=$(git merge-base HEAD "$BASE_REF")
+git --no-pager diff --color=never "$MERGE_BASE"
