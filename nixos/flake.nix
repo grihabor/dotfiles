@@ -1,7 +1,7 @@
 {
   description = "A simple NixOS flake";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
   inputs.nix-alien.url = "github:thiagokokada/nix-alien";
 
   outputs = {
