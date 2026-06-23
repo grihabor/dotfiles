@@ -19,10 +19,8 @@ in {
     # available plugins: battery, cpu-usage, git, gpu-usage, ram-usage, network, network-bandwidth, network-ping, attached-clients, network-vpn, weather, time, spotify-tui, kubernetes-context
     set -g @dracula-plugins "cpu-usage ram-usage"
 
-    # Let tmux advertise its own terminfo entry and detect kitty features from
-    # the outer terminal instead of forcing a generic screen TERM everywhere.
-    set -g default-terminal "tmux-256color"
-    set -ga terminal-features ",xterm-kitty:RGB"
+    # colors
+    set -g default-terminal "screen-256color"
     set-option -sa terminal-overrides ",alacritty:Tc"
 
     # Start windows and panes at 1, not 0
