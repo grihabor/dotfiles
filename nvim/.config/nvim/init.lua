@@ -32,6 +32,7 @@ vim.filetype.add({
 })
 
 require("lazy").setup(require("plugins"), {})
+require("config.quickfix_command").setup()
 
 --
 -- python

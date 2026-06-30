@@ -45,7 +45,6 @@ in {
     (pkgs.writeShellScriptBin "python-nix" "exec -a $0 ${python3}/bin/python3 \"$@\"")
 
     pkgs.alejandra
-    pkgs.ausweisapp
     pkgs.clang-tools
     pkgs.comby
     pkgs.coursier
