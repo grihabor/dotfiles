@@ -9,6 +9,8 @@ return {
             "javascript",
             "json",
             "lua",
+            "markdown",
+            "markdown_inline",
             "nix",
             "python",
             "rust",
