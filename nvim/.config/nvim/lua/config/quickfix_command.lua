@@ -3,10 +3,12 @@ return {
         require("quickfix_command").setup({
             commands = {
                 pants_mypy_forge = {
-                    command = "pants mypy src/python/tools/forge",
+                    command = function()
+                        return "pants --no-dynamic-ui check --only=mypy " .. vim.fn.getcwd() .. "::"
+                    end,
                     keymap = "<leader>pm",
-                    desc = "Run pants mypy for forge",
-                    title = "pants mypy src/python/tools/forge",
+                    desc = "Run pants mypy for current dir",
+                    title = "pants mypy",
                 },
             },
         })
