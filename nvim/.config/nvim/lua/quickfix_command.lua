@@ -26,9 +26,9 @@ local function normalize_cwd(cwd)
     return vim.fs.normalize(cwd or vim.fn.getcwd())
 end
 
-local function normalize_command(command)
+local function normalize_command(command, arg)
     if type(command) == "function" then
-        command = command()
+        command = command(arg)
     end
 
     if type(command) == "string" then
@@ -46,11 +46,11 @@ local function normalize_command(command)
 end
 
 local function resolve_filename(filename, cwd)
-    if filename == "" then
+    if not filename or filename == "" then
         return nil
     end
 
-    if vim.fs.isabs(filename) then
+    if filename:sub(1, 1) == "/" then
         return vim.fs.normalize(filename)
     end
 
@@ -174,6 +174,88 @@ local function handle_result(name, spec, cwd, result)
     vim.notify(string.format("%s finished with exit code %d", title, result.code), level)
 end
 
+local function pick_directory(prompt, callback)
+    local pickers = require("telescope.pickers")
+    local finders = require("telescope.finders")
+    local conf = require("telescope.config").values
+    local actions = require("telescope.actions")
+    local action_state = require("telescope.actions.state")
+
+    local cwd = vim.fn.getcwd()
+    local dirs = vim.fn.systemlist("fd --type d --hidden --exclude .git", cwd)
+
+    pickers.new({}, {
+        prompt_title = prompt or "Select directory",
+        finder = finders.new_table({ results = dirs }),
+        sorter = conf.generic_sorter({}),
+        attach_mappings = function(prompt_bufnr)
+            actions.select_default:replace(function()
+                actions.close(prompt_bufnr)
+                local selection = action_state.get_selected_entry()
+                if selection then
+                    vim.schedule(function()
+                        callback(vim.fs.normalize(vim.fs.joinpath(cwd, selection[1])))
+                    end)
+                end
+            end)
+            return true
+        end,
+    }):find()
+end
+
+local function run_with_arg(name, spec, arg)
+    local ok, command = pcall(normalize_command, spec.command, arg)
+    if not ok then
+        vim.notify(command, vim.log.levels.ERROR)
+        return
+    end
+
+    local cwd = normalize_cwd(spec.cwd)
+    local cmd_str = table.concat(command, " ")
+
+    local buf = vim.api.nvim_create_buf(false, true)
+    vim.bo[buf].buftype = "nofile"
+    vim.bo[buf].swapfile = false
+
+    vim.cmd("vsplit")
+    vim.api.nvim_win_set_buf(vim.api.nvim_get_current_win(), buf)
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, { cmd_str, "" })
+
+    local accumulated = { stdout = "", stderr = "" }
+    local remainder   = { stdout = "", stderr = "" }
+
+    local function flush(key, data)
+        if not data then return end
+        accumulated[key] = accumulated[key] .. data
+        remainder[key] = remainder[key] .. data
+        local lines = vim.split(remainder[key], "\n", { plain = true })
+        remainder[key] = table.remove(lines)
+        if #lines > 0 then
+            vim.schedule(function()
+                vim.api.nvim_buf_set_lines(buf, -1, -1, false, lines)
+            end)
+        end
+    end
+
+    vim.system(command, {
+        cwd = cwd,
+        text = true,
+        stdout = function(_, data) flush("stdout", data) end,
+        stderr = function(_, data) flush("stderr", data) end,
+    }, function(result)
+        vim.schedule(function()
+            local tail = {}
+            if remainder.stdout ~= "" then table.insert(tail, remainder.stdout) end
+            if remainder.stderr ~= "" then table.insert(tail, remainder.stderr) end
+            table.insert(tail, string.format("[exited with code %d]", result.code))
+            vim.api.nvim_buf_set_lines(buf, -1, -1, false, tail)
+            result.stdout = accumulated.stdout
+            result.stderr = accumulated.stderr
+            handle_result(name, spec, cwd, result)
+        end)
+    end)
+end
+
 function M.run(name)
     local spec = M.commands[name]
     if not spec then
@@ -181,22 +263,14 @@ function M.run(name)
         return
     end
 
-    local ok, command = pcall(normalize_command, spec.command)
-    if not ok then
-        vim.notify(command, vim.log.levels.ERROR)
+    if spec.input then
+        pick_directory(spec.input.prompt, function(dir)
+            run_with_arg(name, spec, dir)
+        end)
         return
     end
 
-    local cwd = normalize_cwd(spec.cwd)
-    local title = spec.title or name
-
-    vim.notify(table.concat(command, " "), vim.log.levels.INFO)
-
-    vim.system(command, { cwd = cwd, text = true }, function(result)
-        vim.schedule(function()
-            handle_result(name, spec, cwd, result)
-        end)
-    end)
+    run_with_arg(name, spec, nil)
 end
 
 function M.setup(opts)
@@ -226,5 +300,7 @@ function M.create_user_command()
         complete = complete_names,
     })
 end
+
+M.parse_lines = default_parser
 
 return M
