@@ -217,8 +217,10 @@ local function run_with_arg(name, spec, arg)
     vim.bo[buf].buftype = "nofile"
     vim.bo[buf].swapfile = false
 
+    local origin_win = vim.api.nvim_get_current_win()
     vim.cmd("rightbelow vsplit")
     vim.api.nvim_win_set_buf(vim.api.nvim_get_current_win(), buf)
+    vim.api.nvim_set_current_win(origin_win)
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, { cmd_str, "" })
 
     local accumulated = { stdout = "", stderr = "" }
