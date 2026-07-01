@@ -1,5 +1,6 @@
 local M = {
     commands = {},
+    _bufs = {},
 }
 
 local severity_map = {
@@ -215,13 +216,33 @@ local function run_with_arg(name, spec, arg)
     local cwd = normalize_cwd(spec.cwd)
     local cmd_str = table.concat(command, " ")
 
-    local buf = vim.api.nvim_create_buf(false, true)
-    vim.bo[buf].buftype = "nofile"
-    vim.bo[buf].swapfile = false
+    local existing_buf = M._bufs[name]
+    local buf
+    if existing_buf and vim.api.nvim_buf_is_valid(existing_buf) then
+        buf = existing_buf
+    else
+        buf = vim.api.nvim_create_buf(false, true)
+        vim.bo[buf].buftype = "nofile"
+        vim.bo[buf].swapfile = false
+        M._bufs[name] = buf
+    end
 
     local origin_win = vim.api.nvim_get_current_win()
-    vim.cmd("rightbelow vsplit")
-    vim.api.nvim_win_set_buf(vim.api.nvim_get_current_win(), buf)
+
+    -- find existing window showing this buffer, or open a new one
+    local buf_win = nil
+    for _, win in ipairs(vim.api.nvim_list_wins()) do
+        if vim.api.nvim_win_get_buf(win) == buf then
+            buf_win = win
+            break
+        end
+    end
+    if not buf_win then
+        vim.cmd("rightbelow vsplit")
+        buf_win = vim.api.nvim_get_current_win()
+        vim.api.nvim_win_set_buf(buf_win, buf)
+    end
+
     vim.api.nvim_set_current_win(origin_win)
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, { cmd_str, "" })
 
