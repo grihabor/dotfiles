@@ -190,7 +190,7 @@ function M.run(name)
     local cwd = normalize_cwd(spec.cwd)
     local title = spec.title or name
 
-    vim.notify(string.format("Running %s", title), vim.log.levels.INFO)
+    vim.notify(table.concat(command, " "), vim.log.levels.INFO)
 
     vim.system(command, { cwd = cwd, text = true }, function(result)
         vim.schedule(function()
