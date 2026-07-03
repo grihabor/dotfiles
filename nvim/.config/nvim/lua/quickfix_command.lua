@@ -143,7 +143,7 @@ local function set_quickfix_list(items, title)
 
     if #items > 0 then
         local win = vim.api.nvim_get_current_win()
-        vim.cmd("copen")
+        vim.cmd("botright copen")
         vim.api.nvim_set_current_win(win)
     end
 end
