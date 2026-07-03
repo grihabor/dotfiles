@@ -1,5 +1,9 @@
 [window]
 decorations = "None"
 
+[window.padding]
+x = 6
+y = 0
+
 [font]
 normal = { family = "JetBrainsMono Nerd Font", style = "Regular" }
