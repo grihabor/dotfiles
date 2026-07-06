@@ -17,6 +17,7 @@ local on_attach = function(client, bufnr)
         print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
     end, bufopts)
     vim.keymap.set("n", "<space>D", vim.lsp.buf.type_definition, bufopts)
+    vim.keymap.set({ "n", "v" }, "<space>ca", vim.lsp.buf.code_action, bufopts)
 
     vim.keymap.set("n", "gr", function()
         telescope_builtin.lsp_references()
