@@ -4,7 +4,7 @@ return {
             commands = {
                 pants_mypy_forge = {
                     command = function(dir)
-                        return "pants --no-dynamic-ui check --only=mypy " .. dir .. "::"
+                        return "pants --no-dynamic-ui --no-colors check --only=mypy " .. dir .. "::"
                     end,
                     input = {
                         prompt = "Target directory",
