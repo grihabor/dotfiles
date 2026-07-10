@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 FD=fd
 
 if ! command -v $FD >>/dev/null; then
@@ -17,6 +19,7 @@ if ! command -v fzf >>/dev/null; then
     exit 1
 fi
 
+fzf_exit_code=0
 PROJECT_ROOT=$($FD --hidden --regex "^.git$" \
     --exclude .cargo \
     --exclude .local \
@@ -26,17 +29,16 @@ PROJECT_ROOT=$($FD --hidden --regex "^.git$" \
     --max-depth 5 \
     "$HOME" |
     xargs dirname |
-    fzf)
+    fzf) || fzf_exit_code=$?
 
-fzf_exit_code=$?
 if [ $fzf_exit_code -ne 0 ]; then
     printf "fzf exit code %d\n" $fzf_exit_code
     exit 1
 fi
 
 # If the chosen dir is a git worktree, name it <bare-repo-name>_<worktree-name>
-GIT_COMMON_DIR=$(cd "$PROJECT_ROOT" && git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)
-GIT_DIR=$(cd "$PROJECT_ROOT" && git rev-parse --path-format=absolute --absolute-git-dir 2>/dev/null)
+GIT_COMMON_DIR=$(git -C "$PROJECT_ROOT" rev-parse --path-format=absolute --git-common-dir 2>/dev/null) || true
+GIT_DIR=$(git -C "$PROJECT_ROOT" rev-parse --path-format=absolute --absolute-git-dir 2>/dev/null) || true
 if [ -n "$GIT_COMMON_DIR" ] && [ "$GIT_COMMON_DIR" != "$GIT_DIR" ]; then
     # common dir is the repo itself (bare) or /path/to/<repo>/.git (non-bare)
     BARE_NAME=$(basename "$GIT_COMMON_DIR")
@@ -52,14 +54,15 @@ fi
 
 if ! tmux has-session -t="$NAME"; then
     echo "Creating session $NAME"
-    if [ "$TMUX" != "" ]; then
+    FLAGS=()
+    if [ "${TMUX:-}" != "" ]; then
         FLAGS=(-d)
     fi
     tmux new-session "${FLAGS[@]}" \
         -c "$PROJECT_ROOT" \
         -s "$NAME"
 fi
-if [ "$TMUX" == "" ]; then
+if [ "${TMUX:-}" == "" ]; then
     tmux attach -t "$NAME"
 else
     tmux switch-client -t "$NAME"
