@@ -4,20 +4,12 @@ set -euo pipefail
 
 FD=fd
 
-if ! command -v $FD >>/dev/null; then
-    $FD -h # print error message
-    exit 1
-fi
-
-if ! command -v tmux >>/dev/null; then
-    tmux -h # print error message
-    exit 1
-fi
-
-if ! command -v fzf >>/dev/null; then
-    fzf -h # print error message
-    exit 1
-fi
+for cmd in "$FD" tmux fzf; do
+    if ! command -v "$cmd" >/dev/null 2>&1; then
+        printf 'error: %s not found in PATH\n' "$cmd" >&2
+        exit 1
+    fi
+done
 
 fzf_exit_code=0
 PROJECT_ROOT=$($FD --hidden --regex "^.git$" \
