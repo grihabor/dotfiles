@@ -34,7 +34,22 @@ if [ $fzf_exit_code -ne 0 ]; then
     exit 1
 fi
 
-NAME=$(basename "$PROJECT_ROOT")
+# If the chosen dir is a git worktree, name it <bare-repo-name>_<worktree-name>
+GIT_COMMON_DIR=$(cd "$PROJECT_ROOT" && git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)
+GIT_DIR=$(cd "$PROJECT_ROOT" && git rev-parse --path-format=absolute --absolute-git-dir 2>/dev/null)
+if [ -n "$GIT_COMMON_DIR" ] && [ "$GIT_COMMON_DIR" != "$GIT_DIR" ]; then
+    # common dir is the repo itself (bare) or /path/to/<repo>/.git (non-bare)
+    BARE_NAME=$(basename "$GIT_COMMON_DIR")
+    if [ "$BARE_NAME" = ".git" ]; then
+        BARE_NAME=$(basename "$(dirname "$GIT_COMMON_DIR")")
+    fi
+    WORKTREE_NAME=$(basename "$PROJECT_ROOT")
+    NAME="${BARE_NAME}_${WORKTREE_NAME}"
+else
+    # normal repo (or not a bare repo): name it after the dir
+    NAME=$(basename "$PROJECT_ROOT")
+fi
+
 if ! tmux has-session -t="$NAME"; then
     echo "Creating session $NAME"
     if [ "$TMUX" != "" ]; then
