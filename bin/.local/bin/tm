@@ -52,7 +52,7 @@ else
     NAME=$(basename "$PROJECT_ROOT")
 fi
 
-if ! tmux has-session -t="$NAME"; then
+if ! tmux has-session -t="$NAME" 2>/dev/null; then
     echo "Creating session $NAME"
     FLAGS=()
     if [ "${TMUX:-}" != "" ]; then
