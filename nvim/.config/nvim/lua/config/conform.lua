@@ -13,6 +13,7 @@ local formatters_by_ft = {
     rust = {},
     sh = { "shfmt" },
     sql = { "sqlfluff" },
+    toml = { "taplo" },
     typescript = { "prettier" },
     typescriptreact = { "prettier" },
     xml = { "xmlformat" },
