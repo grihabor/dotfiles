@@ -46,13 +46,14 @@ fi
 
 if ! tmux has-session -t="$NAME" 2>/dev/null; then
     echo "Creating session $NAME"
-    FLAGS=()
-    if [ "${TMUX:-}" != "" ]; then
-        FLAGS=(-d)
-    fi
-    tmux new-session "${FLAGS[@]}" \
+    # Always create the session detached so we can send keys to it before
+    # attaching. If created attached, new-session would block until the
+    # session ends and send-keys would never run in time.
+    tmux new-session -d \
         -c "$PROJECT_ROOT" \
         -s "$NAME"
+    # Open nvim in the project dir only in the first window of the session.
+    tmux send-keys -t "$NAME" 'nvim .' Enter
 fi
 if [ "${TMUX:-}" == "" ]; then
     tmux attach -t "$NAME"
