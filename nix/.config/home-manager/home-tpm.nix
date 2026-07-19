@@ -30,6 +30,14 @@ in {
     # Scrollback buffer size
     set -g history-limit 10000
 
+    # vi-style copy-mode
+    set -g mode-keys vi
+    # copy selection to system clipboard (X11) with xclip
+    bind-key -T copy-mode-vi v send-keys -X begin-selection
+    bind-key -T copy-mode-vi y send-keys -X copy-pipe 'xclip -selection clipboard' \; send-keys -X clear-selection
+    bind-key -T copy-mode-vi Enter send-keys -X copy-pipe 'xclip -selection clipboard' \; send-keys -X clear-selection
+    bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel 'xclip -selection clipboard'
+
     # Disable prefix on F12 for remote tmux
     # https://gist.github.com/samoshkin/05e65f7f1c9b55d3fc7690b59d678734
     bind -T root F12  \
