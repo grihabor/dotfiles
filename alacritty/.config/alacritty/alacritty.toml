@@ -8,5 +8,8 @@ y = 0
 [font]
 normal = { family = "JetBrainsMono Nerd Font", style = "Regular" }
 
+[scrolling]
+history = 10000
+
 [search]
 overlay_last_line = true

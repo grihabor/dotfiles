@@ -27,6 +27,9 @@ in {
     set -g base-index 1
     setw -g pane-base-index 1
 
+    # Scrollback buffer size
+    set -g history-limit 10000
+
     # Disable prefix on F12 for remote tmux
     # https://gist.github.com/samoshkin/05e65f7f1c9b55d3fc7690b59d678734
     bind -T root F12  \
