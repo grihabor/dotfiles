@@ -48,11 +48,13 @@ def get_args(firefox: str) -> list[str]:
             "pulsepoint" in url.path
             or url.hostname is not None
             and (
-                "pulsepoint" in url.hostname
-                or "pulse.prod" in url.hostname
-                or "ppinc" in url.hostname
+                False
+                or "internetbrands" in url.hostname
                 or "newrelic" in url.hostname
                 or "onenr" in url.hostname
+                or "ppinc" in url.hostname
+                or "pulse.prod" in url.hostname
+                or "pulsepoint" in url.hostname
             )
         ):
             return [firefox, "-P", "pulsepoint"] + args
