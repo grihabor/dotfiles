@@ -9,3 +9,8 @@ Install neovim config
 ```bash
 stow nvim
 ```
+
+Install system files (target `/`, needs sudo)
+```bash
+sudo stow -t / display-gamma-reset
+```

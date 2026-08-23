@@ -1,0 +1,25 @@
+#!/bin/sh
+# Reset display gamma/brightness after resume (fixes stuck orange tint)
+case "$1" in
+  post)
+    USER_NAME=grihabor
+    USER_UID=1000
+    export XAUTHORITY=/run/user/${USER_UID}/gdm/Xauthority
+
+    # Auto-detect the active X display from the running X socket
+    # (display number can change between boots, e.g. :0 vs :1)
+    DISPLAY=""
+    for sock in /tmp/.X11-unix/X*; do
+      [ -e "$sock" ] || continue
+      DISPLAY=":${sock##*/X}"
+      break
+    done
+    [ -n "$DISPLAY" ] || DISPLAY=:0
+    export DISPLAY
+
+    # give the GPU/driver a moment to re-init
+    sleep 3
+    runuser -u "$USER_NAME" -- env DISPLAY="$DISPLAY" XAUTHORITY="$XAUTHORITY" \
+      xrandr --output DP-3 --gamma 1.0:1.0:1.0 --brightness 1.0
+    ;;
+esac
