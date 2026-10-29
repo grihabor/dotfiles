@@ -66,8 +66,8 @@ in {
     pkgs.lua-language-server
     pkgs.meld
     pkgs.nil
-    pkgs.nodePackages.prettier
-    pkgs.nodePackages.typescript-language-server
+    pkgs.prettier
+    pkgs.typescript-language-server
     pkgs.pmd
     pkgs.pre-commit
     pkgs.protobuf
