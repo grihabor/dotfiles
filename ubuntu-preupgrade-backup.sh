@@ -1,33 +1,68 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-# Usage: sudo ./ubuntu-preupgrade-backup.sh /media/username/BackupDrive
+# Usage:
+#   sudo ./ubuntu-preupgrade-backup.sh /media/username/BackupDrive
+#   sudo ./ubuntu-preupgrade-backup.sh --only-estimate-size [/path]
+
+usage() {
+    echo "Usage: sudo $0 [--only-estimate-size] /path/to/external/drive"
+    echo "       sudo $0 --only-estimate-size"
+    exit 1
+}
 
 if [[ $EUID -ne 0 ]]; then
     echo "ERROR: Run with sudo."
     exit 1
 fi
 
-if [[ $# -ne 1 || ! -d "$1" ]]; then
-    echo "Usage: sudo $0 /path/to/external/drive"
-    exit 1
+# Parse options; collect positional arguments separately.
+ONLY_ESTIMATE=0
+POSITIONAL=()
+for arg in "$@"; do
+    case "$arg" in
+    --only-estimate-size) ONLY_ESTIMATE=1 ;;
+    -h | --help) usage ;;
+    -*)
+        echo "ERROR: Unknown option: $arg"
+        usage
+        ;;
+    *) POSITIONAL+=("$arg") ;;
+    esac
+done
+set -- ${POSITIONAL[@]+"${POSITIONAL[@]}"}
+
+# A destination is required for a real backup, but optional when only
+# estimating size (in that case the available-space check is skipped).
+if [[ $# -gt 1 ]]; then
+    usage
+fi
+if [[ $ONLY_ESTIMATE -eq 0 && $# -ne 1 ]]; then
+    usage
 fi
 
-DEST=$(realpath -e -- "$1")
-MOUNT=$(findmnt -n -o TARGET -T "$DEST")
+DEST=""
+if [[ $# -eq 1 ]]; then
+    if [[ ! -d "$1" ]]; then
+        usage
+    fi
 
-# Protect against accidentally backing up onto the system disk.
-if [[ "$MOUNT" == "/" ]]; then
-    echo "ERROR: Destination is not on a separate mounted filesystem."
-    exit 1
+    DEST=$(realpath -e -- "$1")
+    MOUNT=$(findmnt -n -o TARGET -T "$DEST")
+
+    # Protect against accidentally backing up onto the system disk.
+    if [[ "$MOUNT" == "/" ]]; then
+        echo "ERROR: Destination is not on a separate mounted filesystem."
+        exit 1
+    fi
+
+    case "$DEST/" in
+    /home/*)
+        echo "ERROR: Backup destination must not be inside /home."
+        exit 1
+        ;;
+    esac
 fi
-
-case "$DEST/" in
-/home/*)
-    echo "ERROR: Backup destination must not be inside /home."
-    exit 1
-    ;;
-esac
 
 command -v rsync >/dev/null || {
     echo "Install rsync first: sudo apt install rsync"
@@ -40,7 +75,6 @@ DIRECTORIES=(
     /home
     /root
     /usr/local
-    /opt
     /boot
     /var/lib/dpkg
     /var/lib/apt
@@ -61,7 +95,8 @@ DIRECTORIES=(
 EXCLUDES=(
     '.cache'              # generic user cache, re-created on demand
     '.steam'             # Steam client files, re-downloadable
-    '.local/share/Steam' # Steam games/library, re-downloadable
+    '.local'             # app data/state & installed binaries, reproducible
+    'go'                 # Go module cache & installed binaries, re-fetchable
     '.m2'                # Maven dependency cache, re-fetched from repos
     '.pyenv'             # pyenv Pythons, reinstallable via pyenv
     '.gradle'            # Gradle cache/wrapper, re-fetched on build
@@ -135,9 +170,6 @@ done
 # Add 15% safety margin
 REQUIRED_BYTES=$((TOTAL_BYTES + (TOTAL_BYTES * 15 + 99) / 100))
 
-# Available destination space
-AVAILABLE_BYTES=$(df -B1 --output=avail "$DEST" | awk 'NR==2 {print $1}')
-
 echo
 echo "========================================"
 echo "Backup size estimate"
@@ -152,10 +184,19 @@ printf "15%% safety margin     : %s\n" \
 printf "Space required        : %s\n" \
     "$(numfmt --to=iec-i --suffix=B "$REQUIRED_BYTES")"
 
-printf "Available disk space  : %s\n" \
-    "$(numfmt --to=iec-i --suffix=B "$AVAILABLE_BYTES")"
+# Available destination space (only when a destination was given)
+if [[ -n "$DEST" ]]; then
+    AVAILABLE_BYTES=$(df -B1 --output=avail "$DEST" | awk 'NR==2 {print $1}')
+    printf "Available disk space  : %s\n" \
+        "$(numfmt --to=iec-i --suffix=B "$AVAILABLE_BYTES")"
+fi
 
 echo "========================================"
+
+# In estimate-only mode, stop here without touching the destination.
+if [[ $ONLY_ESTIMATE -eq 1 ]]; then
+    exit 0
+fi
 
 # Refuse to proceed if insufficient space
 if ((AVAILABLE_BYTES < REQUIRED_BYTES)); then
@@ -216,23 +257,8 @@ backup_tree() {
         "$source/" "$BACKUP/$relative/"
 }
 
-# System configuration and user data
-for directory in \
-    /etc \
-    /home \
-    /root \
-    /usr/local \
-    /opt \
-    /boot \
-    /var/lib/dpkg \
-    /var/lib/apt \
-    /var/lib/snapd \
-    /var/lib/flatpak \
-    /var/lib/NetworkManager \
-    /var/lib/bluetooth \
-    /var/lib/AccountsService \
-    /var/lib/systemd \
-    /var/spool/cron; do
+# System configuration and user data (same list used for estimation)
+for directory in "${DIRECTORIES[@]}"; do
     backup_tree "$directory"
 done
 
