@@ -104,22 +104,136 @@ EXCLUDES=(
     '.rustup'            # rustup toolchains, reinstallable via rustup
 )
 
-# Build tool-specific exclude arguments from the single EXCLUDES list so
-# estimation (du) and backup (rsync) always stay in sync.
-DU_EXCLUDES=()
-RSYNC_EXCLUDES=()
-for pattern in "${EXCLUDES[@]}"; do
-    DU_EXCLUDES+=(--exclude="$pattern")
-    # Anchored form matches at the source root, '**/' form at any depth.
-    RSYNC_EXCLUDES+=(--exclude="$pattern" --exclude="**/$pattern")
-done
+# ---------------------------------------------------------------------------
+# Single source of truth: the backup plan.
+#
+# All "what to skip" logic lives here and nowhere else. We produce ONE
+# NUL-separated file listing every path to back up. Each entry is either:
+#   * a directory whose whole subtree is wanted (copied recursively), or
+#   * an individual file living in a directory we had to split because it
+#     also contains excluded content.
+# A directory is split (its children listed individually) only when it
+# actually contains something excluded; otherwise it is listed wholesale and
+# we do not descend into it. The same plan file feeds estimation, the size
+# breakdown and the final rsync, so they can never drift apart.
+# ---------------------------------------------------------------------------
+
+PLAN_FILE=$(mktemp)
+trap 'rm -f "$PLAN_FILE"' EXIT
+
+# Absolute paths that must never be backed up:
+#   * directories whose name matches EXCLUDES (caches, toolchains, ...)
+#   * Rust "target/" build dirs (a dir named target next to a Cargo.toml);
+#     "target" alone is too generic, so we require the Cargo.toml sibling.
+declare -A EXCLUDED_SET=()
+
+detect_exclusions() {
+    local base cargo_toml target_dir dir pattern
+    local name_expr=()
+    for pattern in "${EXCLUDES[@]}"; do
+        name_expr+=(-name "$pattern" -o)
+    done
+
+    for base in "${DIRECTORIES[@]}"; do
+        [[ -d "$base" ]] || continue
+
+        # Name-matched dirs (pruned so we don't waste time inside them).
+        while IFS= read -r -d '' dir; do
+            EXCLUDED_SET["$dir"]=1
+        done < <(find "$base" -xdev -type d \
+            \( "${name_expr[@]}" -false \) -prune -print0 2>/dev/null)
+
+        # Rust target dirs, skipping already-excluded names while searching.
+        while IFS= read -r -d '' cargo_toml; do
+            target_dir="$(dirname "$cargo_toml")/target"
+            [[ -d "$target_dir" ]] && EXCLUDED_SET["$target_dir"]=1
+        done < <(find "$base" -xdev \
+            \( -type d \( "${name_expr[@]}" -false \) -prune \) -o \
+            -type f -name Cargo.toml -print0 2>/dev/null)
+    done
+}
+
+# Does any excluded path live strictly below this directory?
+has_excluded_under() {
+    local prefix="$1/" key
+    for key in "${!EXCLUDED_SET[@]}"; do
+        [[ "$key" == "$prefix"* ]] && return 0
+    done
+    return 1
+}
+
+emit_plan_entry() {
+    printf '%s\0' "$1" >>"$PLAN_FILE"
+}
+
+# Add the wanted content of a directory to the plan (see header comment).
+plan_dir() {
+    local dir="$1" child
+    [[ -n "${EXCLUDED_SET[$dir]:-}" ]] && return
+
+    if ! has_excluded_under "$dir"; then
+        emit_plan_entry "$dir"
+        return
+    fi
+
+    while IFS= read -r -d '' child; do
+        if [[ -d "$child" && ! -L "$child" ]]; then
+            plan_dir "$child"
+        else
+            emit_plan_entry "$child"
+        fi
+    done < <(find "$dir" -xdev -mindepth 1 -maxdepth 1 -print0 2>/dev/null)
+}
+
+build_plan() {
+    : >"$PLAN_FILE"
+    local directory
+    for directory in "${DIRECTORIES[@]}"; do
+        [[ -d "$directory" ]] || continue
+        plan_dir "$directory"
+    done
+}
+
+# Apparent size in bytes of a single path.
+du_bytes() {
+    local b
+    b=$(du -s -x --apparent-size --block-size=1 "$1" 2>/dev/null |
+        awk '{print $1}')
+    echo "${b:-0}"
+}
+
+# Size of a path as it will actually be backed up, derived purely from the
+# plan so it matches the real backup exactly:
+#   * if the path was split, sum the plan entries at/under it;
+#   * if it sits inside a wholesale (clean) directory, du it directly;
+#   * otherwise it is excluded and contributes nothing.
+size_of() {
+    local path="$1" prefix="$1/" entry total=0 found=0 inside=0
+    while IFS= read -r -d '' entry; do
+        if [[ "$entry" == "$path" || "$entry" == "$prefix"* ]]; then
+            found=1
+            total=$((total + $(du_bytes "$entry")))
+        elif [[ "$path" == "$entry/"* ]]; then
+            inside=1
+        fi
+    done <"$PLAN_FILE"
+
+    if ((found)); then
+        echo "$total"
+    elif ((inside)); then
+        du_bytes "$path"
+    else
+        echo 0
+    fi
+}
+
+detect_exclusions
+build_plan
 
 echo
 echo "========================================"
 echo "Pre-backup size estimation"
 echo "========================================"
-
-TOTAL_BYTES=0
 
 # Show subdirectory breakdown for directories larger than this (10 GiB)
 BREAKDOWN_THRESHOLD=$((10 * 1024 * 1024 * 1024))
@@ -140,30 +254,23 @@ print_entry() {
     fi
 }
 
-# List immediate subdirectories (>= DISPLAY_THRESHOLD) of a directory and
-# hand each to print_entry. du prints a directory once its traversal
-# completes, so output appears incrementally.
+# List immediate subdirectories (>= DISPLAY_THRESHOLD) of a directory using
+# plan-derived sizes, so excluded content is naturally omitted.
 show_breakdown() {
-    local parent="$1"
-    local subsize subdir
-    while IFS=$'\t' read -r subsize subdir; do
-        [[ "$subdir" == "$parent" ]] && continue
-        ((subsize >= DISPLAY_THRESHOLD)) || continue
-        print_entry "$subdir" "$subsize"
-    done < <(du -x --apparent-size --block-size=1 "${DU_EXCLUDES[@]}" \
-        --max-depth=1 "$parent" 2>/dev/null)
+    local parent="$1" child size
+    while IFS= read -r -d '' child; do
+        [[ -d "$child" && ! -L "$child" ]] || continue
+        size=$(size_of "$child")
+        ((size >= DISPLAY_THRESHOLD)) || continue
+        print_entry "$child" "$size"
+    done < <(find "$parent" -xdev -mindepth 1 -maxdepth 1 -print0 2>/dev/null)
 }
 
+TOTAL_BYTES=0
 for directory in "${DIRECTORIES[@]}"; do
-    if [[ ! -d "$directory" ]]; then
-        continue
-    fi
-
-    SIZE=$(du -sx --apparent-size --block-size=1 "${DU_EXCLUDES[@]}" \
-        "$directory" | awk '{print $1}')
-
+    [[ -d "$directory" ]] || continue
+    SIZE=$(size_of "$directory")
     print_entry "$directory" "$SIZE"
-
     TOTAL_BYTES=$((TOTAL_BYTES + SIZE))
 done
 
@@ -237,30 +344,20 @@ RSYNC_OPTS=(
     --numeric-ids
     --human-readable
     --info=progress2
+    --from0
+    --files-from="$PLAN_FILE"
+    # --files-from turns off -a's recursion unless --recursive is given
+    # explicitly; wholesale directories in the plan must be copied in full.
+    --recursive
 )
 
-backup_tree() {
-    local source="$1"
-    local relative="${source#/}"
+echo
+echo "Backing up all planned paths..."
 
-    if [[ ! -d "$source" ]]; then
-        echo "Skipping missing directory: $source"
-        return
-    fi
-
-    echo
-    echo "Backing up $source"
-
-    mkdir -p "$BACKUP/$relative"
-
-    rsync "${RSYNC_OPTS[@]}" "${RSYNC_EXCLUDES[@]}" \
-        "$source/" "$BACKUP/$relative/"
-}
-
-# System configuration and user data (same list used for estimation)
-for directory in "${DIRECTORIES[@]}"; do
-    backup_tree "$directory"
-done
+# Plan entries are absolute paths, so using "/" as the source recreates the
+# full tree under $BACKUP (e.g. /home/u -> $BACKUP/home/u). The plan already
+# omits every excluded path, so no --exclude filters are needed here.
+rsync "${RSYNC_OPTS[@]}" / "$BACKUP/"
 
 # Collect system and package inventories
 REPORT="$BACKUP/inventory"
