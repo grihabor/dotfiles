@@ -72,7 +72,10 @@ for directory in "${DIRECTORIES[@]}"; do
 
     if [[ "$directory" == "/home" ]]; then
         SIZE=$(du -sx --apparent-size --block-size=1 \
-            --exclude='.cache' "$directory" | awk '{print $1}')
+            --exclude='.cache' \
+            --exclude='.steam' \
+            --exclude='.local/share/Steam' \
+            "$directory" | awk '{print $1}')
     else
         SIZE=$(du -sx --apparent-size --block-size=1 \
             "$directory" | awk '{print $1}')
@@ -107,7 +110,7 @@ printf "Available disk space  : %s\n" \
 echo "========================================"
 
 # Refuse to proceed if insufficient space
-if (( AVAILABLE_BYTES < REQUIRED_BYTES )); then
+if ((AVAILABLE_BYTES < REQUIRED_BYTES)); then
     echo
     echo "ERROR: Insufficient free space on backup destination."
     echo "Free up space or choose another destination."
@@ -118,13 +121,13 @@ echo
 read -r -p "Proceed with backup? [y/N]: " CONFIRM
 
 case "${CONFIRM,,}" in
-    y|yes)
-        echo "Proceeding with backup..."
-        ;;
-    *)
-        echo "Backup cancelled by user."
-        exit 0
-        ;;
+y | yes)
+    echo "Proceeding with backup..."
+    ;;
+*)
+    echo "Backup cancelled by user."
+    exit 0
+    ;;
 esac
 
 # Create backup directory only after confirmation
@@ -165,6 +168,9 @@ backup_tree() {
         rsync "${RSYNC_OPTS[@]}" \
             --exclude='/.cache/***' \
             --exclude='*/.cache/***' \
+            --exclude='/.steam/***' \
+            --exclude='*/.steam/***' \
+            --exclude='*/.local/share/Steam/***' \
             "$source/" "$BACKUP/$relative/"
     else
         rsync "${RSYNC_OPTS[@]}" \
