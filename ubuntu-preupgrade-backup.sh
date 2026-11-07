@@ -56,6 +56,29 @@ DIRECTORIES=(
     /var/backups
 )
 
+# Paths excluded everywhere: estimation, breakdown display, and backup.
+# Patterns are matched against any directory level (e.g. per-user $HOME).
+EXCLUDES=(
+    '.cache'              # generic user cache, re-created on demand
+    '.steam'             # Steam client files, re-downloadable
+    '.local/share/Steam' # Steam games/library, re-downloadable
+    '.m2'                # Maven dependency cache, re-fetched from repos
+    '.pyenv'             # pyenv Pythons, reinstallable via pyenv
+    '.gradle'            # Gradle cache/wrapper, re-fetched on build
+    '.ivy2'              # Ivy/SBT dependency cache, re-fetched from repos
+    '.rustup'            # rustup toolchains, reinstallable via rustup
+)
+
+# Build tool-specific exclude arguments from the single EXCLUDES list so
+# estimation (du) and backup (rsync) always stay in sync.
+DU_EXCLUDES=()
+RSYNC_EXCLUDES=()
+for pattern in "${EXCLUDES[@]}"; do
+    DU_EXCLUDES+=(--exclude="$pattern")
+    # Anchored form matches at the source root, '**/' form at any depth.
+    RSYNC_EXCLUDES+=(--exclude="$pattern" --exclude="**/$pattern")
+done
+
 echo
 echo "========================================"
 echo "Pre-backup size estimation"
@@ -63,23 +86,48 @@ echo "========================================"
 
 TOTAL_BYTES=0
 
+# Show subdirectory breakdown for directories larger than this (10 GiB)
+BREAKDOWN_THRESHOLD=$((10 * 1024 * 1024 * 1024))
+
+# Only list subdirectories that are at least this size (1 GiB)
+DISPLAY_THRESHOLD=$((1 * 1024 * 1024 * 1024))
+
+# Print one "path  size" line and, when the entry is large enough, recurse
+# into its subdirectories. Used for both top-level directories and the
+# subdirectories discovered during a breakdown, so formatting and the
+# descend rule stay identical everywhere.
+print_entry() {
+    local path="$1" size="$2"
+    printf "%-30s %s\n" "$path" \
+        "$(numfmt --to=iec-i --suffix=B "$size")"
+    if ((size >= BREAKDOWN_THRESHOLD)); then
+        show_breakdown "$path"
+    fi
+}
+
+# List immediate subdirectories (>= DISPLAY_THRESHOLD) of a directory and
+# hand each to print_entry. du prints a directory once its traversal
+# completes, so output appears incrementally.
+show_breakdown() {
+    local parent="$1"
+    local subsize subdir
+    while IFS=$'\t' read -r subsize subdir; do
+        [[ "$subdir" == "$parent" ]] && continue
+        ((subsize >= DISPLAY_THRESHOLD)) || continue
+        print_entry "$subdir" "$subsize"
+    done < <(du -x --apparent-size --block-size=1 "${DU_EXCLUDES[@]}" \
+        --max-depth=1 "$parent" 2>/dev/null)
+}
+
 for directory in "${DIRECTORIES[@]}"; do
     if [[ ! -d "$directory" ]]; then
         continue
     fi
 
-    echo "Estimating: $directory"
+    SIZE=$(du -sx --apparent-size --block-size=1 "${DU_EXCLUDES[@]}" \
+        "$directory" | awk '{print $1}')
 
-    if [[ "$directory" == "/home" ]]; then
-        SIZE=$(du -sx --apparent-size --block-size=1 \
-            --exclude='.cache' \
-            --exclude='.steam' \
-            --exclude='.local/share/Steam' \
-            "$directory" | awk '{print $1}')
-    else
-        SIZE=$(du -sx --apparent-size --block-size=1 \
-            "$directory" | awk '{print $1}')
-    fi
+    print_entry "$directory" "$SIZE"
 
     TOTAL_BYTES=$((TOTAL_BYTES + SIZE))
 done
@@ -164,18 +212,8 @@ backup_tree() {
 
     mkdir -p "$BACKUP/$relative"
 
-    if [[ "$source" == "/home" ]]; then
-        rsync "${RSYNC_OPTS[@]}" \
-            --exclude='/.cache/***' \
-            --exclude='*/.cache/***' \
-            --exclude='/.steam/***' \
-            --exclude='*/.steam/***' \
-            --exclude='*/.local/share/Steam/***' \
-            "$source/" "$BACKUP/$relative/"
-    else
-        rsync "${RSYNC_OPTS[@]}" \
-            "$source/" "$BACKUP/$relative/"
-    fi
+    rsync "${RSYNC_OPTS[@]}" "${RSYNC_EXCLUDES[@]}" \
+        "$source/" "$BACKUP/$relative/"
 }
 
 # System configuration and user data
