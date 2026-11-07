@@ -102,6 +102,8 @@ EXCLUDES=(
     '.gradle'            # Gradle cache/wrapper, re-fetched on build
     '.ivy2'              # Ivy/SBT dependency cache, re-fetched from repos
     '.rustup'            # rustup toolchains, reinstallable via rustup
+    '__pycache__'        # Python bytecode cache, regenerated on run
+    '.venv'              # Python virtualenvs, recreatable from requirements
 )
 
 # ---------------------------------------------------------------------------
