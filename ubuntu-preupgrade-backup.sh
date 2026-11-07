@@ -34,6 +34,100 @@ command -v rsync >/dev/null || {
     exit 1
 }
 
+# Directories to back up
+DIRECTORIES=(
+    /etc
+    /home
+    /root
+    /usr/local
+    /opt
+    /boot
+    /var/lib/dpkg
+    /var/lib/apt
+    /var/lib/snapd
+    /var/lib/flatpak
+    /var/lib/NetworkManager
+    /var/lib/bluetooth
+    /var/lib/AccountsService
+    /var/lib/systemd
+    /var/spool/cron
+    /srv
+    /var/www
+    /var/backups
+)
+
+echo
+echo "========================================"
+echo "Pre-backup size estimation"
+echo "========================================"
+
+TOTAL_BYTES=0
+
+for directory in "${DIRECTORIES[@]}"; do
+    if [[ ! -d "$directory" ]]; then
+        continue
+    fi
+
+    echo "Estimating: $directory"
+
+    if [[ "$directory" == "/home" ]]; then
+        SIZE=$(du -sx --apparent-size --block-size=1 \
+            --exclude='.cache' "$directory" | awk '{print $1}')
+    else
+        SIZE=$(du -sx --apparent-size --block-size=1 \
+            "$directory" | awk '{print $1}')
+    fi
+
+    TOTAL_BYTES=$((TOTAL_BYTES + SIZE))
+done
+
+# Add 15% safety margin
+REQUIRED_BYTES=$((TOTAL_BYTES + (TOTAL_BYTES * 15 + 99) / 100))
+
+# Available destination space
+AVAILABLE_BYTES=$(df -B1 --output=avail "$DEST" | awk 'NR==2 {print $1}')
+
+echo
+echo "========================================"
+echo "Backup size estimate"
+echo "========================================"
+
+printf "Estimated backup size : %s\n" \
+    "$(numfmt --to=iec-i --suffix=B "$TOTAL_BYTES")"
+
+printf "15%% safety margin     : %s\n" \
+    "$(numfmt --to=iec-i --suffix=B "$((REQUIRED_BYTES - TOTAL_BYTES))")"
+
+printf "Space required        : %s\n" \
+    "$(numfmt --to=iec-i --suffix=B "$REQUIRED_BYTES")"
+
+printf "Available disk space  : %s\n" \
+    "$(numfmt --to=iec-i --suffix=B "$AVAILABLE_BYTES")"
+
+echo "========================================"
+
+# Refuse to proceed if insufficient space
+if (( AVAILABLE_BYTES < REQUIRED_BYTES )); then
+    echo
+    echo "ERROR: Insufficient free space on backup destination."
+    echo "Free up space or choose another destination."
+    exit 1
+fi
+
+echo
+read -r -p "Proceed with backup? [y/N]: " CONFIRM
+
+case "${CONFIRM,,}" in
+    y|yes)
+        echo "Proceeding with backup..."
+        ;;
+    *)
+        echo "Backup cancelled by user."
+        exit 0
+        ;;
+esac
+
+# Create backup directory only after confirmation
 BACKUP="$DEST/ubuntu-preupgrade-$(date +%Y%m%d-%H%M%S)"
 mkdir -p "$BACKUP"
 chmod 700 "$BACKUP"
