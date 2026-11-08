@@ -1,0 +1,14 @@
+[Unit]
+Description=Mount Docker data disk
+Requires=dev-mmcblk0p1.device
+After=dev-mmcblk0p1.device
+BindsTo=dev-mmcblk0p1.device
+
+[Mount]
+What=/dev/disk/by-uuid/c4e67529-d286-4a66-bc4a-0f46eb3f0257
+Where=/mnt/docker
+Type=ext4
+Options=defaults
+
+[Install]
+WantedBy=multi-user.target
