@@ -3,11 +3,15 @@ set -Eeuo pipefail
 
 # Usage:
 #   sudo ./ubuntu-preupgrade-backup.sh /media/username/BackupDrive
+#   sudo ./ubuntu-preupgrade-backup.sh            # choose drive interactively
 #   sudo ./ubuntu-preupgrade-backup.sh --only-estimate-size [/path]
 
 usage() {
-    echo "Usage: sudo $0 [--only-estimate-size] [--keep-plan] /path/to/external/drive"
+    echo "Usage: sudo $0 [--only-estimate-size] [--keep-plan] [/path/to/external/drive]"
     echo "       sudo $0 --only-estimate-size [--keep-plan]"
+    echo
+    echo "  If no destination path is given for a real backup, you will be"
+    echo "  prompted to choose a mounted drive and a subdirectory on it."
     echo
     echo "  --keep-plan  Write the NUL-separated backup plan to a readable"
     echo "               file and keep it after exit (path is printed)."
@@ -45,34 +49,131 @@ set -- ${POSITIONAL[@]+"${POSITIONAL[@]}"}
 
 # A destination is required for a real backup, but optional when only
 # estimating size (in that case the available-space check is skipped).
+# When omitted for a real backup, it is chosen interactively below.
 if [[ $# -gt 1 ]]; then
     usage
 fi
-if [[ $ONLY_ESTIMATE -eq 0 && $# -ne 1 ]]; then
-    usage
-fi
+
+# Validate a candidate destination path and echo its canonical form.
+# Enforces: it must exist, live on a separate mounted filesystem (not /)
+# and not be inside /home.
+validate_dest() {
+    local candidate="$1" dest mount
+    if [[ ! -d "$candidate" ]]; then
+        echo "ERROR: Not a directory: $candidate" >&2
+        return 1
+    fi
+
+    dest=$(realpath -e -- "$candidate")
+    mount=$(findmnt -n -o TARGET -T "$dest")
+
+    # Protect against accidentally backing up onto the system disk.
+    if [[ "$mount" == "/" ]]; then
+        echo "ERROR: Destination is not on a separate mounted filesystem." >&2
+        return 1
+    fi
+
+    case "$dest/" in
+    /home/*)
+        echo "ERROR: Backup destination must not be inside /home." >&2
+        return 1
+        ;;
+    esac
+
+    printf '%s\n' "$dest"
+}
+
+# Interactively choose a mounted external drive, then a subdirectory within
+# it. Prints the chosen destination path on stdout; all prompts go to stderr
+# so they never contaminate the result.
+select_destination() {
+    local -a mounts=() labels=()
+    local target source size label line
+
+    # List mounted filesystems under the usual removable-media roots.
+    while IFS=$'\t' read -r target source size label; do
+        case "$target" in
+        /media/* | /mnt/* | /run/media/*)
+            mounts+=("$target")
+            labels+=("$target  [${label:-$source}, ${size:-?}]")
+            ;;
+        esac
+    done < <(findmnt -rn -o TARGET,SOURCE,SIZE,LABEL)
+
+    if [[ ${#mounts[@]} -eq 0 ]]; then
+        echo "ERROR: No mounted external drives found under /media, /mnt or /run/media." >&2
+        return 1
+    fi
+
+    echo "Available drives:" >&2
+    local i
+    for i in "${!mounts[@]}"; do
+        printf "  %2d) %s\n" "$((i + 1))" "${labels[$i]}" >&2
+    done
+
+    local choice drive
+    while true; do
+        read -r -p "Select a drive [1-${#mounts[@]}]: " choice </dev/tty
+        if [[ "$choice" =~ ^[0-9]+$ ]] &&
+            ((choice >= 1 && choice <= ${#mounts[@]})); then
+            drive="${mounts[$((choice - 1))]}"
+            break
+        fi
+        echo "Invalid selection." >&2
+    done
+
+    # Offer existing subdirectories plus options to use the drive root or
+    # create a new subdirectory.
+    local -a subdirs=()
+    while IFS= read -r line; do
+        subdirs+=("$line")
+    done < <(find "$drive" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' 2>/dev/null | sort)
+
+    echo >&2
+    echo "Destination inside $drive:" >&2
+    printf "  %2d) %s\n" 0 "(use drive root: $drive)" >&2
+    for i in "${!subdirs[@]}"; do
+        printf "  %2d) %s\n" "$((i + 1))" "${subdirs[$i]}/" >&2
+    done
+    printf "  %2s) %s\n" "n" "(create a new subdirectory)" >&2
+
+    local sub dest name
+    while true; do
+        read -r -p "Select a destination [0-${#subdirs[@]}, or n]: " sub </dev/tty
+        if [[ "$sub" == "n" || "$sub" == "N" ]]; then
+            read -r -p "New subdirectory name: " name </dev/tty
+            if [[ -z "$name" || "$name" == */* ]]; then
+                echo "Invalid name." >&2
+                continue
+            fi
+            dest="$drive/$name"
+            mkdir -p "$dest" || {
+                echo "ERROR: Could not create $dest" >&2
+                continue
+            }
+            break
+        elif [[ "$sub" == "0" ]]; then
+            dest="$drive"
+            break
+        elif [[ "$sub" =~ ^[0-9]+$ ]] &&
+            ((sub >= 1 && sub <= ${#subdirs[@]})); then
+            dest="$drive/${subdirs[$((sub - 1))]}"
+            break
+        fi
+        echo "Invalid selection." >&2
+    done
+
+    printf '%s\n' "$dest"
+}
 
 DEST=""
 if [[ $# -eq 1 ]]; then
-    if [[ ! -d "$1" ]]; then
-        usage
-    fi
-
-    DEST=$(realpath -e -- "$1")
-    MOUNT=$(findmnt -n -o TARGET -T "$DEST")
-
-    # Protect against accidentally backing up onto the system disk.
-    if [[ "$MOUNT" == "/" ]]; then
-        echo "ERROR: Destination is not on a separate mounted filesystem."
-        exit 1
-    fi
-
-    case "$DEST/" in
-    /home/*)
-        echo "ERROR: Backup destination must not be inside /home."
-        exit 1
-        ;;
-    esac
+    DEST=$(validate_dest "$1") || exit 1
+elif [[ $ONLY_ESTIMATE -eq 0 ]]; then
+    # No path given for a real backup: choose one interactively.
+    DEST=$(select_destination) || exit 1
+    DEST=$(validate_dest "$DEST") || exit 1
+    echo "Selected destination: $DEST"
 fi
 
 command -v rsync >/dev/null || {
