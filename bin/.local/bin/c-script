@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+#
+# c-script — run a C source file like a script.
+#
+# Intended to be used as a shebang interpreter:
+#
+#     #!/usr/bin/env -S c-script
+#     #include <stdio.h>
+#     int main(int argc, char **argv) { puts("hi"); return 0; }
+#
+# When the C file is executed, the kernel invokes:
+#     c-script /path/to/file.c [args...]
+# c-script compiles the file (caching the result, keyed on the source's
+# mtime+size) and execs the resulting binary with the remaining arguments.
+#
+# The leading shebang line is stripped before compilation because "#!..."
+# is not a valid C preprocessor directive.
+#
+# Extra compiler flags can be supplied from within the source via a line
+# starting with "//cc:", e.g.:
+#     //cc: -O2 -lm -Wall
+#
+set -Eeuo pipefail
+
+if [[ $# -lt 1 ]]; then
+    echo "Usage: c-script SOURCE.c [args...]" >&2
+    exit 2
+fi
+
+SRC=$1
+shift
+
+if [[ ! -f "$SRC" ]]; then
+    echo "c-script: no such file: $SRC" >&2
+    exit 2
+fi
+
+SRC=$(realpath -- "$SRC")
+CC=${CC:-cc}
+
+# Cache compiled binaries so repeated runs are instant. The key includes the
+# absolute path, size and mtime, so any edit triggers a rebuild.
+CACHE_DIR=${XDG_CACHE_HOME:-$HOME/.cache}/c-script
+mkdir -p "$CACHE_DIR"
+
+read -r SIZE MTIME < <(stat -c '%s %Y' -- "$SRC")
+KEY=$(printf '%s\0%s\0%s' "$SRC" "$SIZE" "$MTIME" | cksum | cut -d' ' -f1)
+BASE=$(basename -- "$SRC")
+BIN="$CACHE_DIR/${BASE%.c}-$KEY"
+
+if [[ ! -x "$BIN" ]]; then
+    # Gather optional compiler flags declared in the source.
+    EXTRA_FLAGS=()
+    while IFS= read -r line; do
+        read -r -a parsed <<<"${line#//cc:}"
+        EXTRA_FLAGS+=("${parsed[@]}")
+    done < <(grep -E '^//cc:' -- "$SRC" || true)
+
+    TMP_SRC=$(mktemp "$CACHE_DIR/XXXXXX.c")
+    TMP_BIN=$(mktemp "$CACHE_DIR/XXXXXX.bin")
+    trap 'rm -f "$TMP_SRC" "$TMP_BIN"' EXIT
+
+    # Strip the shebang on the first line (replace with a blank line to keep
+    # compiler error line numbers aligned with the original source).
+    { printf '\n'; tail -n +2 -- "$SRC"; } >"$TMP_SRC"
+
+    if ! "$CC" ${EXTRA_FLAGS[@]+"${EXTRA_FLAGS[@]}"} -o "$TMP_BIN" "$TMP_SRC"; then
+        echo "c-script: compilation failed: $SRC" >&2
+        exit 1
+    fi
+
+    mv -f "$TMP_BIN" "$BIN"
+    rm -f "$TMP_SRC"
+    trap - EXIT
+fi
+
+exec "$BIN" "$@"

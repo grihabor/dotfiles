@@ -6,9 +6,18 @@ set -Eeuo pipefail
 #   sudo ./ubuntu-preupgrade-backup.sh --only-estimate-size [/path]
 
 usage() {
-    echo "Usage: sudo $0 [--only-estimate-size] /path/to/external/drive"
-    echo "       sudo $0 --only-estimate-size"
+    echo "Usage: sudo $0 [--only-estimate-size] [--keep-plan] /path/to/external/drive"
+    echo "       sudo $0 --only-estimate-size [--keep-plan]"
+    echo
+    echo "  --keep-plan  Write the NUL-separated backup plan to a readable"
+    echo "               file and keep it after exit (path is printed)."
     exit 1
+}
+
+# Progress messages go to stderr so they never mix into the plan/estimate
+# output on stdout. Each line is timestamped so a long pause is obvious.
+log() {
+    printf '[%s] %s\n' "$(date +%H:%M:%S)" "$*" >&2
 }
 
 if [[ $EUID -ne 0 ]]; then
@@ -18,10 +27,12 @@ fi
 
 # Parse options; collect positional arguments separately.
 ONLY_ESTIMATE=0
+KEEP_PLAN=0
 POSITIONAL=()
 for arg in "$@"; do
     case "$arg" in
     --only-estimate-size) ONLY_ESTIMATE=1 ;;
+    --keep-plan) KEEP_PLAN=1 ;;
     -h | --help) usage ;;
     -*)
         echo "ERROR: Unknown option: $arg"
@@ -104,6 +115,7 @@ EXCLUDES=(
     '.rustup'            # rustup toolchains, reinstallable via rustup
     '__pycache__'        # Python bytecode cache, regenerated on run
     '.venv'              # Python virtualenvs, recreatable from requirements
+    '.wine'              # Wine prefix, reinstallable
 )
 
 # ---------------------------------------------------------------------------
@@ -121,115 +133,92 @@ EXCLUDES=(
 # ---------------------------------------------------------------------------
 
 PLAN_FILE=$(mktemp)
-trap 'rm -f "$PLAN_FILE"' EXIT
+if [[ $KEEP_PLAN -eq 1 ]]; then
+    # Keep the plan for inspection. Write a readable (newline-separated) copy
+    # to a predictable path in the invoking user's current directory, owned by
+    # that user rather than root, so it is easy to find after a sudo run.
+    PLAN_KEEP="$PWD/ubuntu-preupgrade-plan.txt"
+    keep_plan() {
+        tr '\0' '\n' <"$PLAN_FILE" >"$PLAN_KEEP" || return
+        [[ -n "${SUDO_USER:-}" ]] && chown "$SUDO_USER" "$PLAN_KEEP" 2>/dev/null
+        rm -f "$PLAN_FILE"
+        echo "Backup plan kept at: $PLAN_KEEP"
+    }
+    trap keep_plan EXIT
+else
+    trap 'rm -f "$PLAN_FILE"' EXIT
+fi
 
-# Absolute paths that must never be backed up:
-#   * directories whose name matches EXCLUDES (caches, toolchains, ...)
-#   * Rust "target/" build dirs (a dir named target next to a Cargo.toml);
-#     "target" alone is too generic, so we require the Cargo.toml sibling.
-declare -A EXCLUDED_SET=()
+# The plan (the single source of truth, see header comment above) is produced
+# by a fast C helper that lives next to this script. It discovers excluded
+# paths and emits the NUL-separated plan in a single filesystem walk. The pure
+# Bash implementation this replaces was far too slow on large home trees.
+#
+# The helper is a self-compiling C "script": its shebang runs c-script, which
+# compiles it (with mtime-based caching) and execs the result. We invoke
+# c-script explicitly rather than relying on the shebang so it works under
+# sudo's restricted PATH too.
+#
+# Exclusion rules passed to the helper:
+#   * --exclude NAME     a directory whose basename equals NAME (EXCLUDES)
+#   * --marker FILE:DIR  exclude sibling DIR when a dir contains file FILE:
+#       Cargo.toml -> sibling "target/" (Rust build dir)
+#       pants.toml -> sibling "dist/"   (Pants build dir)
+# "target"/"dist" alone are too generic, hence the marker-file requirement.
 
-detect_exclusions() {
-    local base cargo_toml target_dir dir pattern
-    local name_expr=()
-    for pattern in "${EXCLUDES[@]}"; do
-        name_expr+=(-name "$pattern" -o)
-    done
-
-    for base in "${DIRECTORIES[@]}"; do
-        [[ -d "$base" ]] || continue
-
-        # Name-matched dirs (pruned so we don't waste time inside them).
-        while IFS= read -r -d '' dir; do
-            EXCLUDED_SET["$dir"]=1
-        done < <(find "$base" -xdev -type d \
-            \( "${name_expr[@]}" -false \) -prune -print0 2>/dev/null)
-
-        # Rust target dirs, skipping already-excluded names while searching.
-        while IFS= read -r -d '' cargo_toml; do
-            target_dir="$(dirname "$cargo_toml")/target"
-            [[ -d "$target_dir" ]] && EXCLUDED_SET["$target_dir"]=1
-        done < <(find "$base" -xdev \
-            \( -type d \( "${name_expr[@]}" -false \) -prune \) -o \
-            -type f -name Cargo.toml -print0 2>/dev/null)
-    done
-}
-
-# Does any excluded path live strictly below this directory?
-has_excluded_under() {
-    local prefix="$1/" key
-    for key in "${!EXCLUDED_SET[@]}"; do
-        [[ "$key" == "$prefix"* ]] && return 0
+# Locate the c-script interpreter. Like fd, a user-installed c-script in the
+# invoking user's profile is not on PATH under sudo, so probe there too.
+find_c_script() {
+    local dir home
+    if command -v c-script >/dev/null; then
+        command -v c-script
+        return 0
+    fi
+    home=$(eval echo "~${SUDO_USER:-}")
+    for dir in "$home/.local/bin" "$home/.nix-profile/bin" "$home/.cargo/bin"; do
+        if [[ -x "$dir/c-script" ]]; then
+            echo "$dir/c-script"
+            return 0
+        fi
     done
     return 1
 }
 
-emit_plan_entry() {
-    printf '%s\0' "$1" >>"$PLAN_FILE"
-}
+if ! C_SCRIPT=$(find_c_script); then
+    echo "ERROR: c-script not found (needed to build the plan helper)."
+    echo "(ensure c-script is on PATH, incl. when running under sudo)"
+    exit 1
+fi
 
-# Add the wanted content of a directory to the plan (see header comment).
-plan_dir() {
-    local dir="$1" child
-    [[ -n "${EXCLUDED_SET[$dir]:-}" ]] && return
+# The plan and size helper sources live next to c-script.
+HELPER_DIR="$(dirname -- "$C_SCRIPT")"
+PLAN_SRC="$HELPER_DIR/ubuntu-preupgrade-plan.c"
+SIZE_SRC="$HELPER_DIR/ubuntu-preupgrade-size.c"
 
-    if ! has_excluded_under "$dir"; then
-        emit_plan_entry "$dir"
-        return
-    fi
-
-    while IFS= read -r -d '' child; do
-        if [[ -d "$child" && ! -L "$child" ]]; then
-            plan_dir "$child"
-        else
-            emit_plan_entry "$child"
-        fi
-    done < <(find "$dir" -xdev -mindepth 1 -maxdepth 1 -print0 2>/dev/null)
-}
+if [[ ! -f "$PLAN_SRC" ]]; then
+    echo "ERROR: plan helper source not found: $PLAN_SRC"
+    exit 1
+fi
+if [[ ! -f "$SIZE_SRC" ]]; then
+    echo "ERROR: size helper source not found: $SIZE_SRC"
+    exit 1
+fi
 
 build_plan() {
-    : >"$PLAN_FILE"
-    local directory
+    local directory dirs=() args=() pattern
     for directory in "${DIRECTORIES[@]}"; do
-        [[ -d "$directory" ]] || continue
-        plan_dir "$directory"
+        [[ -d "$directory" ]] && dirs+=("$directory")
     done
+
+    for pattern in "${EXCLUDES[@]}"; do
+        args+=(--exclude "$pattern")
+    done
+    args+=(--marker Cargo.toml:target --marker pants.toml:dist)
+
+    # The helper logs progress to stderr and writes the plan to stdout.
+    "$C_SCRIPT" "$PLAN_SRC" "${args[@]}" -- "${dirs[@]}" >"$PLAN_FILE"
 }
 
-# Apparent size in bytes of a single path.
-du_bytes() {
-    local b
-    b=$(du -s -x --apparent-size --block-size=1 "$1" 2>/dev/null |
-        awk '{print $1}')
-    echo "${b:-0}"
-}
-
-# Size of a path as it will actually be backed up, derived purely from the
-# plan so it matches the real backup exactly:
-#   * if the path was split, sum the plan entries at/under it;
-#   * if it sits inside a wholesale (clean) directory, du it directly;
-#   * otherwise it is excluded and contributes nothing.
-size_of() {
-    local path="$1" prefix="$1/" entry total=0 found=0 inside=0
-    while IFS= read -r -d '' entry; do
-        if [[ "$entry" == "$path" || "$entry" == "$prefix"* ]]; then
-            found=1
-            total=$((total + $(du_bytes "$entry")))
-        elif [[ "$path" == "$entry/"* ]]; then
-            inside=1
-        fi
-    done <"$PLAN_FILE"
-
-    if ((found)); then
-        echo "$total"
-    elif ((inside)); then
-        du_bytes "$path"
-    else
-        echo 0
-    fi
-}
-
-detect_exclusions
 build_plan
 
 echo
@@ -243,38 +232,26 @@ BREAKDOWN_THRESHOLD=$((10 * 1024 * 1024 * 1024))
 # Only list subdirectories that are at least this size (1 GiB)
 DISPLAY_THRESHOLD=$((1 * 1024 * 1024 * 1024))
 
-# Print one "path  size" line and, when the entry is large enough, recurse
-# into its subdirectories. Used for both top-level directories and the
-# subdirectories discovered during a breakdown, so formatting and the
-# descend rule stay identical everywhere.
-print_entry() {
-    local path="$1" size="$2"
-    printf "%-30s %s\n" "$path" \
-        "$(numfmt --to=iec-i --suffix=B "$size")"
-    if ((size >= BREAKDOWN_THRESHOLD)); then
-        show_breakdown "$path"
-    fi
-}
-
-# List immediate subdirectories (>= DISPLAY_THRESHOLD) of a directory using
-# plan-derived sizes, so excluded content is naturally omitted.
-show_breakdown() {
-    local parent="$1" child size
-    while IFS= read -r -d '' child; do
-        [[ -d "$child" && ! -L "$child" ]] || continue
-        size=$(size_of "$child")
-        ((size >= DISPLAY_THRESHOLD)) || continue
-        print_entry "$child" "$size"
-    done < <(find "$parent" -xdev -mindepth 1 -maxdepth 1 -print0 2>/dev/null)
-}
-
+# The size estimation (like the plan) is produced by a fast C helper. Reading
+# the plan file once in Bash and shelling out to `du` per entry was far too
+# slow; the helper measures every planned path in a single filesystem walk and
+# answers all size queries from a sorted index. It emits "<bytes>\t<path>"
+# lines (top-level directories plus the large-subdirectory breakdown) on
+# stdout and a final "<total>\tTOTAL" line, logging progress to stderr.
+log "Estimating backup size (this can take a while on large trees)..."
 TOTAL_BYTES=0
-for directory in "${DIRECTORIES[@]}"; do
-    [[ -d "$directory" ]] || continue
-    SIZE=$(size_of "$directory")
-    print_entry "$directory" "$SIZE"
-    TOTAL_BYTES=$((TOTAL_BYTES + SIZE))
-done
+while IFS=$'\t' read -r bytes path; do
+    if [[ "$path" == TOTAL ]]; then
+        TOTAL_BYTES=$bytes
+        continue
+    fi
+    printf "%-30s %s\n" "$path" \
+        "$(numfmt --to=iec-i --suffix=B "$bytes")"
+done < <("$C_SCRIPT" "$SIZE_SRC" \
+    --plan "$PLAN_FILE" \
+    --breakdown-threshold "$BREAKDOWN_THRESHOLD" \
+    --display-threshold "$DISPLAY_THRESHOLD" \
+    -- "${DIRECTORIES[@]}")
 
 # Add 15% safety margin
 REQUIRED_BYTES=$((TOTAL_BYTES + (TOTAL_BYTES * 15 + 99) / 100))
