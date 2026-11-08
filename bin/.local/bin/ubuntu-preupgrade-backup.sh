@@ -222,6 +222,10 @@ EXCLUDES=(
     '__pycache__'        # Python bytecode cache, regenerated on run
     '.venv'              # Python virtualenvs, recreatable from requirements
     '.wine'              # Wine prefix, reinstallable
+    '.pex'               # PEX build/cache dir, regenerated on demand
+    '.nix-profile'       # Nix profile symlink into /nix/store, reproducible
+    '.sbt'               # sbt cache/config, re-fetched on build
+    'Telegram Desktop'   # Telegram auto-downloads (usually in ~/Downloads)
 )
 
 # ---------------------------------------------------------------------------
