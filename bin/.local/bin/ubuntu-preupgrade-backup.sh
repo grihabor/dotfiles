@@ -88,17 +88,22 @@ validate_dest() {
 # so they never contaminate the result.
 select_destination() {
     local -a mounts=() labels=()
-    local target source size label line
+    local TARGET SOURCE SIZE LABEL line
 
     # List mounted filesystems under the usual removable-media roots.
-    while IFS=$'\t' read -r target source size label; do
-        case "$target" in
+    # Use findmnt's PAIRS output (KEY="value") so values containing spaces
+    # are parsed correctly; -rn's default output is space-separated and would
+    # otherwise merge all columns into TARGET.
+    while IFS= read -r line; do
+        TARGET="" SOURCE="" SIZE="" LABEL=""
+        eval "$line"
+        case "$TARGET" in
         /media/* | /mnt/* | /run/media/*)
-            mounts+=("$target")
-            labels+=("$target  [${label:-$source}, ${size:-?}]")
+            mounts+=("$TARGET")
+            labels+=("$TARGET  [${LABEL:-$SOURCE}, ${SIZE:-?}]")
             ;;
         esac
-    done < <(findmnt -rn -o TARGET,SOURCE,SIZE,LABEL)
+    done < <(findmnt -P -o TARGET,SOURCE,SIZE,LABEL)
 
     if [[ ${#mounts[@]} -eq 0 ]]; then
         echo "ERROR: No mounted external drives found under /media, /mnt or /run/media." >&2
