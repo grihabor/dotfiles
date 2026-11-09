@@ -1,0 +1,115 @@
+#!/usr/bin/env python3
+import json
+import logging
+import os
+import subprocess
+import sys
+from pathlib import Path
+from urllib.parse import urlparse
+
+logger = logging.getLogger(__name__)
+
+# Map a logical profile to its Chrome display name. The on-disk profile
+# directory name (Default, Profile 1, ...) is assigned sequentially per machine
+# and is NOT portable, so we resolve it at runtime from the display name.
+# "fallback_dir" is used when the profile can't be found (e.g. not yet created).
+PROFILES = {
+    "pulsepoint": {"display_name": "Pulsepoint", "fallback_dir": None},
+    "personal": {"display_name": "Personal", "fallback_dir": "Default"},
+}
+
+CHROME_CONFIG_DIR = Path(os.environ["HOME"]) / ".config" / "google-chrome"
+
+
+def parse_url(url):
+    try:
+        return urlparse(url)
+    except ValueError:
+        return None
+
+
+def resolve_profile_dir(profile_key: str) -> str | None:
+    """Return the on-disk profile directory for a logical profile key.
+
+    Matches by Chrome display name across ~/.config/google-chrome/*/Preferences.
+    Falls back to the configured fallback_dir when no match is found.
+    """
+    profile = PROFILES[profile_key]
+    display_name = profile["display_name"]
+
+    for prefs in sorted(CHROME_CONFIG_DIR.glob("*/Preferences")):
+        try:
+            with open(prefs) as f:
+                data = json.load(f)
+            name = data.get("profile", {}).get("name")
+        except (OSError, ValueError) as e:
+            logger.warning("failed to read %s: %s", prefs, e)
+            continue
+        if name == display_name:
+            return prefs.parent.name
+
+    logger.warning(
+        "no profile dir found for display name %r, using fallback %r",
+        display_name,
+        profile["fallback_dir"],
+    )
+    return profile["fallback_dir"]
+
+
+def chrome_args_for_profile(chrome: str, profile_key: str, args: list[str]) -> list[str]:
+    profile_dir = resolve_profile_dir(profile_key)
+    if profile_dir is None:
+        return [chrome] + args
+    return [chrome, f"--profile-directory={profile_dir}"] + args
+
+
+def main():
+    # Install:
+    #   sudo update-alternatives --install /usr/bin/x-www-browser x-www-browser /home/grihabor/.local/bin/google-chrome-wrapper 100
+    #   sudo update-alternatives --install /usr/bin/gnome-www-browser gnome-www-browser /home/grihabor/.local/bin/google-chrome-wrapper 100
+    #   xdg-settings set default-web-browser google-chrome-wrapper.desktop
+    logging.basicConfig(
+        filename=Path(os.environ["HOME"]) / ".local" / "google-chrome.log",
+        filemode="a",
+        level=logging.DEBUG,
+        format='{"ts":"%(asctime)s","lvl":"%(levelname)s","msg":"%(message)s"}',
+    )
+    chrome = "google-chrome-stable"
+    args = get_args(chrome)
+    logger.info("old args: %s", sys.argv)
+    logger.info("new args: %s", args)
+    subprocess.run(args)
+
+
+def get_args(chrome: str) -> list[str]:
+    args = sys.argv[1:]
+
+    try:
+        first_arg = next(arg for arg in args if not arg.startswith("-"))
+    except StopIteration:
+        return [chrome] + args
+
+    if (url := parse_url(first_arg)) is not None:
+        if (
+            "pulsepoint" in url.path
+            or url.hostname is not None
+            and (
+                False
+                or "internetbrands" in url.hostname
+                or "newrelic" in url.hostname
+                or "onenr" in url.hostname
+                or "ppinc" in url.hostname
+                or "pulse.prod" in url.hostname
+                or "pulsepoint" in url.hostname
+            )
+        ):
+            return chrome_args_for_profile(chrome, "pulsepoint", args)
+
+        else:
+            return chrome_args_for_profile(chrome, "personal", args)
+
+    return [chrome] + args
+
+
+if __name__ == "__main__":
+    main()

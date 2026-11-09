@@ -15,6 +15,14 @@ Install system files (target `/`, needs sudo)
 sudo stow -t / display-gamma-reset
 ```
 
+Install Google Chrome profile-routing wrapper
+```bash
+stow google-chrome
+xdg-settings set default-web-browser google-chrome-wrapper.desktop
+sudo update-alternatives --install /usr/bin/x-www-browser x-www-browser /home/grihabor/.local/bin/google-chrome-wrapper 100
+sudo update-alternatives --install /usr/bin/gnome-www-browser gnome-www-browser /home/grihabor/.local/bin/google-chrome-wrapper 100
+```
+
 Mount external disk at `/mnt/docker` and point Docker's data-root at it
 (systemd mount unit + udisks ignore rule). Edit the disk UUID in
 `docker-mount/etc/` files to match `lsblk -f`, then stow and activate:
