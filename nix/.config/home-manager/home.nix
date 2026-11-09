@@ -46,7 +46,6 @@ in {
 
     pkgs.alejandra
     pkgs.clang-tools
-    pkgs.coursier
     pkgs.fd
     pkgs.fzf
     pkgs.git
