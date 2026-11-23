@@ -12,8 +12,10 @@ for cmd in "$FD" tmux fzf; do
 done
 
 fzf_exit_code=0
-PROJECT_ROOT=$($FD --hidden --regex "^\.git$" \
+PROJECT_ROOT=$($FD --hidden --no-ignore --regex "^\.git$" \
     --exclude .cargo \
+    --exclude .pyenv \
+    --exclude .krew \
     --exclude .local \
     --exclude .cache \
     --exclude .tmux \
